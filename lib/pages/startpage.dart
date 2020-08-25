@@ -17,10 +17,10 @@ class _Start_PageState extends State<Start_Page> {
         padding:  EdgeInsets.only(top:scheight*1/4 ),
         child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.start,children: [
           Text('FeedMeBack',style: TextStyle(color: Colors.yellow[100],fontSize: 42,fontWeight: FontWeight.bold),),
-          SizedBox(height: scheight*1/15,),
+          SizedBox(height: scheight*1/22,),
           Container(width: scwidth*0.4,height: scheight*1/5,decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/feed1.png'),fit: BoxFit.fill)),),
           Padding(
-            padding:  EdgeInsets.only(top: scheight*1/15),
+            padding:  EdgeInsets.only(top: scheight*0.29),
             child: Container(width: scwidth*1/2,height: scheight*1/17,child: RaisedButton(color: Colors.yellow[300],onPressed: (){
               Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>Authenticate()));
             },child: Text('Start Now',style: TextStyle(color: Colors.black,fontSize: 20),),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),)),

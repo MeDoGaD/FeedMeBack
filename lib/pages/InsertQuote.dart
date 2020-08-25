@@ -21,16 +21,16 @@ class _InsertQuoteState extends State<InsertQuote> {
           child: Center(child: Column(children: [
             Text('Insert Quote',style: TextStyle(color:Colors.yellow[100],fontSize: 32,fontWeight: FontWeight.bold,fontStyle:FontStyle.italic),),
             SizedBox(height: scheight*1/25,),
-            Container(width: scwidth*0.9,height: scheight*0.71,decoration: BoxDecoration(border: Border.all(color: Colors.yellow[200],width:1)),
+            Container(width: scwidth*0.9,height: scheight*0.71,decoration: BoxDecoration(border: Border.all(color:Color.fromRGBO(251, 212, 237, 1),width:1)),
               child: Column(children: [
                 Padding(
                   padding: const EdgeInsets.only(left: 2),
                   child: TextField(style: TextStyle(color: textColor,fontSize: 18),maxLines: 1,decoration: InputDecoration(hintText: 'Title',hintStyle: TextStyle(fontSize:22 ,color: Colors.white30)),),
                 ),
-                Center(child: Text('_________________________',style: TextStyle(color: Colors.yellow[200]),),),
+                Center(child: Text('_________________________',style: TextStyle(color: Color.fromRGBO(251, 212, 237, 1),),),),
                 Padding(
                   padding: const EdgeInsets.only(left: 2),
-                  child: TextField(style: TextStyle(color: textColor,fontSize: 16),maxLines: 22,decoration: InputDecoration(hintText: 'Type your Quote here .... ',hintStyle: TextStyle(fontSize:20 ,color: Colors.white30)),),
+                  child: Container(height:scheight*0.55 ,child: TextField(style: TextStyle(color: textColor,fontSize: 16),decoration: InputDecoration(hintText: 'Type your Quote here .... ',hintStyle: TextStyle(fontSize:20 ,color: Colors.white30)),)),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(5.0),
@@ -76,8 +76,8 @@ class _InsertQuoteState extends State<InsertQuote> {
                     },child: Container(width: scwidth*1/12,height: scheight*1/25,decoration: BoxDecoration(color: Colors.white,shape: BoxShape.circle),)),                  ],),),
                 ),
               ],) ,),
-            SizedBox(height: scheight*1/30,),
-            RaisedButton(color: Colors.yellow[300],onPressed: (){
+            SizedBox(height: scheight*1/33,),
+            RaisedButton(color: Color.fromRGBO(251, 212, 237, 1),onPressed: (){
               //TODO Insert to database
             },child: Text('Sumbit Quote',style: TextStyle(color: Colors.black,fontSize: 20),),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),)
           ],),),

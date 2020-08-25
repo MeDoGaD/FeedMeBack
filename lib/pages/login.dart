@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:feedme/pages/quotes.dart';
 import 'package:feedme/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:feedme/pages/register.dart';
@@ -75,7 +76,9 @@ class _loginState extends State<Login>{
               child: Text("Forget Password?",style: simpleTextFieldStyle(),),),),
             SizedBox(height: 8,),
             Container(child: RaisedButton(child:Text('Login'),onPressed: (){
-              signIn();
+              //signIn();
+              //TODO Login
+              Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>AllQuotes()));
             },
               shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)) ,),),
             Container(child: RaisedButton(child:Text('Sign in with Google'),onPressed: (){
