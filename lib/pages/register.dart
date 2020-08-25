@@ -30,6 +30,9 @@ class _SignupState extends State<Register> {
 
       setState(() {isloading=true;});
 
+      _username.text = "jo";
+      _email.text = "yos7efahmed@gmail.com";
+      _password.text = "123456";
       authMethods.signUpwithEmailAndPassword(_email.text, _password.text).then((value) {
 
         if(AuthMethods.found==true) {
@@ -79,15 +82,15 @@ class _SignupState extends State<Register> {
               Form(key: formkey,child: Column(
                 children: [
                   TextFormField(validator: (val){
-                    return val.isEmpty||val.length<2 ? 'Please provide a valid the Username':null;
+//                    return val.isEmpty||val.length<2 ? 'Please provide a valid the Username':null;
                   },controller: _username,style: simpleTextFieldStyle(),
                     decoration:textfield("Username"),),
                   TextFormField(validator: (val){
-                    return RegExp(r"^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})").hasMatch(val)?null:'Please provide a valid the email';
+//                    return RegExp(r"^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})").hasMatch(val)?null:'Please provide a valid the email';
                   },controller: _email,style: simpleTextFieldStyle(),
                       decoration:textfield("Email")),
                   TextFormField(obscureText: true,validator: (val){
-                    return val.length<6 ? 'The password must be larger than 6 characters':null;
+//                    return val.length<6 ? 'The password must be larger than 6 characters':null;
                   },controller: _password,style: simpleTextFieldStyle(),
                       decoration:textfield("Password")),
                 ],
