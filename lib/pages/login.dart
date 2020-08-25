@@ -29,10 +29,7 @@ class _loginState extends State<Login>{
   QuerySnapshot snapshotUserInfo;
   signIn()
   {
-    HelperFunctions.saveUserEmail(_useremail.text);
-    HelperFunctions.saveUserLoggedIN(true);
-     dataBaseMethods.getUserByUseremail(_useremail.text);
-     HelperFunctions.saveUsername(DataBaseMethods.currentUser.username);
+
 //    print(DataBaseMethods.currentUser.username);
 //    dataBaseMethods.getUserByUseremail(_useremail.text).then((val){
 ////      snapshotUserInfo=val;
@@ -42,10 +39,14 @@ class _loginState extends State<Login>{
     setState(() {
       isloading=true;
     });
+    HelperFunctions.saveUserEmail(_useremail.text);
+    HelperFunctions.saveUserLoggedIN(true);
+    dataBaseMethods.getUserByUseremail(_useremail.text);
+    HelperFunctions.saveUsername(DataBaseMethods.currentUser.username);
     authMethods.signInWithEmailAndPassword(_useremail.text, _password.text).then((value){
       if(value!=null){
         // TODO login success
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>AllQuotes()));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>AllQuotes(DataBaseMethods.currentUser)));
       }
       else
       {
@@ -86,6 +87,8 @@ class _loginState extends State<Login>{
             SizedBox(height: 8,),
             Container(child: RaisedButton(child:Text('Login'),onPressed: (){
               signIn();
+              //TODO Login
+//              Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>AllQuotes()));
             },
               shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)) ,),),
             Container(child: RaisedButton(child:Text('Sign in with Google'),onPressed: (){

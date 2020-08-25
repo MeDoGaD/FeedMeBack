@@ -1,3 +1,5 @@
+import 'package:feedme/model/quot_model.dart';
+import 'package:feedme/services/database.dart';
 import 'package:flutter/material.dart';
 
 class InsertQuote extends StatefulWidget {
@@ -7,11 +9,16 @@ class InsertQuote extends StatefulWidget {
 var textColor = Colors.white;
 
 class _InsertQuoteState extends State<InsertQuote> {
+  TextEditingController _titleController = new TextEditingController();
+  TextEditingController _textController = new TextEditingController();
+  Quot quot;
+  DataBaseMethods _dataBaseMethods = new DataBaseMethods();
   @override
   Widget build(BuildContext context) {
     double scwidth = MediaQuery.of(context).size.width;
     double scheight = MediaQuery.of(context).size.height;
     return (Scaffold(
+      resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.black,
       body: Padding(
         padding: EdgeInsets.only(top: scheight * 1 / 12),
@@ -33,12 +40,14 @@ class _InsertQuoteState extends State<InsertQuote> {
                 width: scwidth * 0.9,
                 height: scheight * 0.71,
                 decoration: BoxDecoration(
-                    border: Border.all(color: Colors.yellow[200], width: 1)),
+                    border: Border.all(
+                        color: Color.fromRGBO(251, 212, 237, 1), width: 1)),
                 child: Column(
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 2),
                       child: TextField(
+                        controller: _titleController,
                         style: TextStyle(color: textColor, fontSize: 18),
                         maxLines: 1,
                         decoration: InputDecoration(
@@ -49,8 +58,10 @@ class _InsertQuoteState extends State<InsertQuote> {
                     ),
                     Center(
                       child: Text(
-                        '_________',
-                        style: TextStyle(color: Colors.yellow[200]),
+                        '_________________________',
+                        style: TextStyle(
+                          color: Color.fromRGBO(251, 212, 237, 1),
+                        ),
                       ),
                     ),
                     Padding(
@@ -58,6 +69,7 @@ class _InsertQuoteState extends State<InsertQuote> {
                       child: Container(
                           height: scheight * 0.55,
                           child: TextField(
+                            controller: _textController,
                             style: TextStyle(color: textColor, fontSize: 16),
                             decoration: InputDecoration(
                                 hintText: 'Type your Quote here .... ',
@@ -217,9 +229,10 @@ class _InsertQuoteState extends State<InsertQuote> {
                 height: scheight * 1 / 33,
               ),
               RaisedButton(
-                color: Colors.yellow[300],
+                color: Color.fromRGBO(251, 212, 237, 1),
                 onPressed: () {
                   //TODO Insert to database
+                  addQuote();
                 },
                 child: Text(
                   'Sumbit Quote',
@@ -233,5 +246,11 @@ class _InsertQuoteState extends State<InsertQuote> {
         ),
       ),
     ));
+  }
+
+  void addQuote() {
+    quot = new Quot(_titleController.text,_textController.text, DataBaseMethods.currentUser, 0, 0, new List<String>());
+    _dataBaseMethods.addQuote(quot);
+    Navigator.pop(context);
   }
 }

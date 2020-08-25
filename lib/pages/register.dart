@@ -49,7 +49,7 @@ class _SignupState extends State<Register> {
           HelperFunctions.saveUserEmail(_email.text);
           dataBaseMethods.uploadUserInfo(newUser);
           //TODO register successfully
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>AllQuotes()));
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>AllQuotes(newUser)));
 
         }
         else

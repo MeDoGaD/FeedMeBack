@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 
 class DataBaseMethods {
   final _userReference = FirebaseDatabase.instance.reference().child('user');
+  final _quotReference = FirebaseDatabase.instance.reference().child('quot');
   UsernameFound(String username) async {
     return await Firestore.instance
         .collection("Users")
@@ -62,22 +63,20 @@ class DataBaseMethods {
 //  User
 
 //  Quot
-  DatabaseReference getQuotReference() {
-    FirebaseDatabase.instance.reference().child("Quot");
-  }
-
   addQuote(Quot quot) {
-    getQuotReference().push().set({
+    _quotReference.push().set({
+      'title': quot.title,
       'text': quot.text,
       'author': quot.author,
       'likes': quot.numberOfLikes,
       'deslikes': quot.numberOfDeslikes,
-      'comments': quot.comments
+      'comments': "quot.comments"
     });
   }
 
   updateQuote(Quot quot) {
-    getQuotReference().child(quot.quotID).set({
+    _quotReference.child(quot.quotID).set({
+      'title': quot.title,
       'text': quot.text,
       'author': quot.author,
       'likes': quot.numberOfLikes,
