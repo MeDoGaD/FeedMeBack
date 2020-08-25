@@ -1,23 +1,23 @@
 import 'package:firebase_database/firebase_database.dart';
 
 class User{
-  String userId;
+  String username;
   String email;
   String password;
-  User({this.userId, this.email, this.password});
+  User({this.username, this.email, this.password});
 
   User.map(dynamic obj){
-    this.userId = obj["ID"];
+    this.username = obj["username"];
     this.email = obj["email"];
     this.password = obj["password"];
   }
 
-  String get _userId => userId;
+  String get _username => username;
   String get _email => email;
   String get _password => password;
 
   User.fromSnapShot(DataSnapshot snapShot ){
-    userId = snapShot.key;
+    username = snapShot.value["username"];
     email = snapShot.value["email"];
     password = snapShot.value["password"];
   }

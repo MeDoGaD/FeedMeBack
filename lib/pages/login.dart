@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:feedme/model/user_model.dart';
+import 'package:feedme/pages/quotes.dart';
 import 'package:feedme/services/database.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:feedme/pages/register.dart';
 import 'package:feedme/Widgets/widget.dart' as wid;
@@ -28,16 +31,21 @@ class _loginState extends State<Login>{
   {
     HelperFunctions.saveUserEmail(_useremail.text);
     HelperFunctions.saveUserLoggedIN(true);
-    dataBaseMethods.getUserByUseremail(_useremail.text).then((val){
-      snapshotUserInfo=val;
-      HelperFunctions.saveUsername(snapshotUserInfo.documents[0].data["name"]);
-    });
+     dataBaseMethods.getUserByUseremail(_useremail.text);
+     HelperFunctions.saveUsername(DataBaseMethods.currentUser.username);
+//    print(DataBaseMethods.currentUser.username);
+//    dataBaseMethods.getUserByUseremail(_useremail.text).then((val){
+////      snapshotUserInfo=val;
+//
+//      HelperFunctions.saveUsername(snapshotUserInfo.documents[0].data["name"]);
+//    });
     setState(() {
       isloading=true;
     });
     authMethods.signInWithEmailAndPassword(_useremail.text, _password.text).then((value){
       if(value!=null){
         // TODO login success
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>AllQuotes()));
       }
       else
       {
@@ -62,7 +70,9 @@ class _loginState extends State<Login>{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Colors.black,appBar: AppBar(title: Text('Login',style: TextStyle(color: Colors.black54),),backgroundColor: Colors.yellow[200],),
+    return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      backgroundColor: Colors.black,appBar: AppBar(title: Text('Login',style: TextStyle(color: Colors.black54),),backgroundColor: Colors.yellow[200],),
       body:Center(
         child: SingleChildScrollView(
           child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center,children: [

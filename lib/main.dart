@@ -44,7 +44,10 @@ class _MyAppState extends State<MyApp> {
       );
     }*/
     return MaterialApp(
-//      home: Start_Page(),
+      home: Start_Page(),
+//      routes: <String,WidgetBuilder>{
+//        '/login': (BuildContext context)=> new Login(toggle)
+//      },
 //        home: InsertQuote(),
     );
 
