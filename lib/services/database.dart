@@ -6,6 +6,7 @@ import 'package:firebase_database/firebase_database.dart';
 class DataBaseMethods {
   final _userReference = FirebaseDatabase.instance.reference().child('user');
   final _quotReference = FirebaseDatabase.instance.reference().child('quot');
+  static User currentUser;
   UsernameFound(String username) async {
     return await Firestore.instance
         .collection("Users")
@@ -26,7 +27,7 @@ class DataBaseMethods {
         .where("name", isEqualTo: username)
         .getDocuments();
   }
-  static User currentUser;
+
    getUserByUseremail(String useremail) {
 //    return await Firestore.instance
 //        .collection("Users")
@@ -70,10 +71,29 @@ class DataBaseMethods {
       'author': quot.author,
       'likes': quot.numberOfLikes,
       'deslikes': quot.numberOfDeslikes,
-      'comments': "quot.comments"
+      'comments': quot.comments
     });
+
   }
 
+  List<Quot> getQuotes() {
+    _quotReference.once().then((DataSnapshot snapshot){
+      Map<dynamic,dynamic> values = snapshot.value;
+      List<Quot> quotes = new List<Quot>();
+      values.forEach((key, value) {
+        quotes.add(new Quot(
+            title:value['title'],
+            text:value['text'],
+            author:value['author'],
+            numberOfLikes:value['likes'],
+            numberOfDeslikes:value['deslikes'],
+            comments: value['comments'])
+        );
+      });
+      return quotes;
+
+    });
+  }
   updateQuote(Quot quot) {
     _quotReference.child(quot.quotID).set({
       'title': quot.title,

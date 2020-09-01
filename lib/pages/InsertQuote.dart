@@ -1,9 +1,13 @@
 import 'package:feedme/model/quot_model.dart';
+import 'package:feedme/model/user_model.dart';
 import 'package:feedme/services/database.dart';
 import 'package:flutter/material.dart';
 
 class InsertQuote extends StatefulWidget {
-  _InsertQuoteState createState() => _InsertQuoteState();
+  User _currentUser;
+  InsertQuote(this._currentUser);
+
+  _InsertQuoteState createState() => _InsertQuoteState(_currentUser);
 }
 
 var textColor = Colors.white;
@@ -13,6 +17,8 @@ class _InsertQuoteState extends State<InsertQuote> {
   TextEditingController _textController = new TextEditingController();
   Quot quot;
   DataBaseMethods _dataBaseMethods = new DataBaseMethods();
+  User _currentUser;
+  _InsertQuoteState(this._currentUser);
   @override
   Widget build(BuildContext context) {
     double scwidth = MediaQuery.of(context).size.width;
@@ -38,7 +44,7 @@ class _InsertQuoteState extends State<InsertQuote> {
               ),
               Container(
                 width: scwidth * 0.9,
-                height: scheight * 0.71,
+                height: scheight * 0.51,
                 decoration: BoxDecoration(
                     border: Border.all(
                         color: Color.fromRGBO(251, 212, 237, 1), width: 1)),
@@ -80,7 +86,7 @@ class _InsertQuoteState extends State<InsertQuote> {
                     Padding(
                       padding: const EdgeInsets.all(5.0),
                       child: Container(
-                        height: scheight * 1 / 20,
+                        height: scheight * 1 / 1,
                         child: Row(
                           children: [
                             SizedBox(
@@ -249,7 +255,13 @@ class _InsertQuoteState extends State<InsertQuote> {
   }
 
   void addQuote() {
-    quot = new Quot(_titleController.text,_textController.text, DataBaseMethods.currentUser, 0, 0, new List<String>());
+    quot = new Quot(
+        title: _titleController.text,
+        text: _textController.text,
+        author: _currentUser.username,
+        numberOfLikes: 0,
+        numberOfDeslikes: 0,
+        comments: new List<String>());
     _dataBaseMethods.addQuote(quot);
     Navigator.pop(context);
   }

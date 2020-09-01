@@ -4,12 +4,12 @@ class Quot{
   String quotID;
   String title;
   String text;
-  User author;
+  String author;
   int numberOfLikes;
   int numberOfDeslikes;
   List<String> comments;
 
-  Quot(this.title,this.text,this.author,this.numberOfLikes,this.numberOfDeslikes,this.comments);
+  Quot({this.title,this.text,this.author,this.numberOfLikes,this.numberOfDeslikes,this.comments});
 
   Quot.map(dynamic obj){
     this.title = obj["title"];
@@ -21,7 +21,7 @@ class Quot{
   }
   String get _title => title;
   String get _text => text;
-  User get _author => author;
+  String get _author => author;
   int get _likes => numberOfLikes;
   int get _deslikes => numberOfDeslikes;
   List<String> get _comments => comments;

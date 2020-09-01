@@ -1,5 +1,10 @@
+import 'dart:async';
+
+import 'package:feedme/model/quot_model.dart';
 import 'package:feedme/model/user_model.dart';
 import 'package:feedme/services/database.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:feedme/helper/authentication.dart';
 import 'package:feedme/pages/InsertQuote.dart';
@@ -12,14 +17,26 @@ class AllQuotes extends StatefulWidget {
 
 class _AllQuotesState extends State<AllQuotes> {
   final User _currentUser;
-
+  DataBaseMethods _dataBaseMethods = new DataBaseMethods();
+  StreamSubscription _onQuoteAddedSubscribtion;
+  List<Quot> _quotes;
   _AllQuotesState(this._currentUser);
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-//    _currentUser = DataBaseMethods.currentUser;
+    _dataBaseMethods.getQuotes();
+    _onQuoteAddedSubscribtion = FirebaseDatabase.instance.reference().child('quot').onChildAdded.listen(onQuoteAdded);
+    _quotes = new List<Quot>();
   }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _onQuoteAddedSubscribtion.cancel();
+  }
+
   @override
   Widget build(BuildContext context) {
     double scwidth = MediaQuery.of(context).size.width;
@@ -84,7 +101,7 @@ class _AllQuotesState extends State<AllQuotes> {
                     left: scheight / 40,
                     right: scheight / 30),
                 child: GestureDetector(onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder:(context)=>InsertQuote()));
+                  Navigator.push(context, MaterialPageRoute(builder:(context)=>InsertQuote(_currentUser)));
                 },
                   child: Container(
                     width: scwidth,
@@ -100,10 +117,11 @@ class _AllQuotesState extends State<AllQuotes> {
               ),
               Expanded(
                 child: ListView.separated(
-                  itemCount: 7,
+                  reverse: true,
+                  itemCount: _quotes.length,
                   itemBuilder: (context, index) {
-                    return Quote("MedoGad", "Love",
-                        "Everything will be appreciated : )");
+                    return Quote(_quotes[index].author, _quotes[index].title,
+                        _quotes[index].text);
                   },
                   separatorBuilder: (context, index) => SizedBox(
                     height: scheight * 1 / 30,
@@ -114,12 +132,20 @@ class _AllQuotesState extends State<AllQuotes> {
           )),
     ));
   }
+
+  void onQuoteAdded(Event event) {
+    setState(() {
+      _quotes.add(new Quot.fromSnapShot(event.snapshot));
+    });
+  }
 }
 
 class Quote extends StatelessWidget {
   final String username;
   final String title;
   final String quote;
+  DataBaseMethods _dataBaseMethods = new DataBaseMethods();
+
   Quote(this.username, this.title, this.quote);
   @override
   Widget build(BuildContext context) {
@@ -134,7 +160,7 @@ class Quote extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: EdgeInsets.only(left: scwidth * 0.2, top: 20 ),
+            padding: EdgeInsets.only(left: scwidth * 0.1, top: 20 ),
             child: Row(
               children: [
                 Text(
@@ -145,16 +171,18 @@ class Quote extends StatelessWidget {
                   width: scwidth * 0.15,
                 ),
                 RaisedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      List<Quot> quotes = await _dataBaseMethods.getQuotes();
+                      print(quotes[0].title);
+                    },
                     child: Text('Follow'),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(40))),
-                IconButton(icon:Icon(Icons.favorite,color: Colors.red,size:35 ,),)
               ],
             ),
           ),
           Text(
-            '____________________________________',
+            '___________________________',
             style: TextStyle(
                 color: Color.fromRGBO(251, 212, 237, 1), fontSize: 20),
           ),
@@ -164,9 +192,10 @@ class Quote extends StatelessWidget {
           ),
           Text(
             quote,
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: TextStyle(color: Colors.white70, fontSize: 18),
           ),
           SizedBox(height:scheight/40),
+          IconButton(padding: EdgeInsets.only(left: scwidth/1.5),icon:Icon(Icons.favorite,color: Colors.red,size:35 ,),)
         ],
       ),
     );
