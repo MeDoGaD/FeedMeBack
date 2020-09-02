@@ -121,7 +121,7 @@ class Quote extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: EdgeInsets.only(left: scwidth * 0.2, top: 20 ),
+            padding: EdgeInsets.only(left: scwidth * 0.17, top: 20 ),
             child: Row(
               children: [
                 Text(
@@ -129,7 +129,7 @@ class Quote extends StatelessWidget {
                   style: TextStyle(color: Colors.white, fontSize: 24),
                 ),
                 SizedBox(
-                  width: scwidth * 0.15,
+                  width: scwidth * 0.1,
                 ),
                 RaisedButton(
                     onPressed: () {},
