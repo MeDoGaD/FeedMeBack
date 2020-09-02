@@ -1,26 +1,25 @@
 import 'dart:async';
+
 import 'package:feedme/model/quot_model.dart';
 import 'package:feedme/model/user_model.dart';
-import 'package:feedme/pages/profile.dart';
+import 'package:feedme/pages/InsertQuote.dart';
+import 'package:feedme/pages/quotes.dart';
 import 'package:feedme/services/database.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:feedme/helper/authentication.dart';
-import 'package:feedme/pages/InsertQuote.dart';
 
-class AllQuotes extends StatefulWidget {
-  final User currentUser;
-  const AllQuotes(this.currentUser);
-  _AllQuotesState createState() => _AllQuotesState(currentUser);
+class Profile extends StatefulWidget {
+
+  final User _currentUser;
+  Profile(this._currentUser);
+  @override
+  _ProfileState createState() => _ProfileState();
 }
 
-class _AllQuotesState extends State<AllQuotes> {
-  final User _currentUser;
+class _ProfileState extends State<Profile> {
   DataBaseMethods _dataBaseMethods = new DataBaseMethods();
   StreamSubscription _onQuoteAddedSubscribtion;
   List<Quot> _quotes;
-  _AllQuotesState(this._currentUser);
   @override
   void initState() {
     // TODO: implement initState
@@ -36,17 +35,15 @@ class _AllQuotesState extends State<AllQuotes> {
     super.dispose();
     _onQuoteAddedSubscribtion.cancel();
   }
-
   @override
   Widget build(BuildContext context) {
     double scwidth = MediaQuery.of(context).size.width;
     double scheight = MediaQuery.of(context).size.height;
-    return (Scaffold(
-      backgroundColor: Color.fromRGBO(30, 73, 117, 80),
-      body: Padding(
-          padding: EdgeInsets.only(top: scheight * 1 / 15),
-          child: Column(
-            children: [
+    return Scaffold(
+        backgroundColor: Color.fromRGBO(30, 73, 117, 80),
+        body: Padding(
+            padding: EdgeInsets.only(top: scheight * 1 / 15),
+            child: Column(children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
@@ -60,6 +57,7 @@ class _AllQuotesState extends State<AllQuotes> {
                               fit: BoxFit.fill),
                           shape: BoxShape.circle),
                     ),
+
                     SizedBox(width: scwidth * 1 / 15),
                     Container(
                         width: scwidth * 1 / 4,
@@ -77,22 +75,25 @@ class _AllQuotesState extends State<AllQuotes> {
                       ),
                       onPressed: () {},
                     ),
-                    SizedBox(width: scwidth * 1 / 20),
-                    GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                  new Profile(_currentUser)));
-                        },
-                        child: Text(
-                          _currentUser == null ? "":_currentUser.username,
-                          style: TextStyle(color: Colors.white70),
-                        )),
                     SizedBox(width: scwidth * 1 / 17),
                     GestureDetector(
-                      onTap: () {},
+                        onTap: () {},
+                        child: Text(
+                          widget._currentUser == null
+                              ? ""
+                              : widget._currentUser.username,
+                          style: TextStyle(color: Colors.white70),
+                        )),
+                     SizedBox(width: scwidth * 1 / 20),
+
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    new AllQuotes(widget._currentUser)));
+                      },
                       child: Text(
                         'Home',
                         style: TextStyle(color: Colors.white70),
@@ -106,9 +107,14 @@ class _AllQuotesState extends State<AllQuotes> {
                     top: scheight / 30,
                     left: scheight / 40,
                     right: scheight / 30),
-                child: GestureDetector(onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder:(context)=>InsertQuote(_currentUser)));
-                },
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                            new InsertQuote(widget._currentUser)));
+                  },
                   child: Container(
                     width: scwidth,
                     height: scheight / 8,
@@ -117,34 +123,46 @@ class _AllQuotesState extends State<AllQuotes> {
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.only(
                             bottomRight: Radius.circular(30),
-                            topLeft: Radius.circular(30))),child: Center(child: Text('Type a Quote here ... ',style: TextStyle(fontSize:22,color: Colors.grey[500]),),),
+                            topLeft: Radius.circular(30))),
+                    child: Center(
+                      child: Text(
+                        'Type a Quote here ... ',
+                        style: TextStyle(fontSize: 22, color: Colors.grey[500]),
+                      ),
+                    ),
                   ),
                 ),
               ),
               Expanded(
                 child: ListView.separated(
-                  reverse: true,
+                  reverse: false,
                   itemCount: _quotes.length,
                   itemBuilder: (context, index) {
-                    return Quote(_quotes[index].author, _quotes[index].title,
-                        _quotes[index].text);
+                  if(_quotes[index].author==widget._currentUser.username) {
+                    return Quote(_quotes[index].author, _quotes[index].title, _quotes[index].text);}
+                  else
+                    {
+                      return Container();
+                    }
                   },
-                  separatorBuilder: (context, index) => SizedBox(
-                    height: scheight * 1 / 30,
-                  ),
+                  separatorBuilder: (context, index) => SizedBox(height:_quotes[index].author==widget._currentUser.username?scheight * 1 / 30:0,),
                 ),
               ),
-            ],
-          )),
-    ));
-  }
+            ]),
+        ),
 
+    );
+
+  }
   void onQuoteAdded(Event event) {
     setState(() {
       _quotes.add(new Quot.fromSnapShot(event.snapshot));
     });
   }
 }
+
+
+
 
 class Quote extends StatelessWidget {
   final String username;
@@ -162,7 +180,7 @@ class Quote extends StatelessWidget {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
           border:
-              Border.all(color: Color.fromRGBO(251, 212, 237, 1), width: 1)),
+          Border.all(color: Color.fromRGBO(251, 212, 237, 1), width: 1)),
       child: Column(
         children: [
           Padding(

@@ -1,5 +1,6 @@
 import 'package:feedme/model/quot_model.dart';
 import 'package:feedme/model/user_model.dart';
+import 'package:feedme/pages/profile.dart';
 import 'package:feedme/services/database.dart';
 import 'package:flutter/material.dart';
 
@@ -234,7 +235,6 @@ class _InsertQuoteState extends State<InsertQuote> {
               RaisedButton(
                 color: Color.fromRGBO(251, 212, 237, 1),
                 onPressed: () {
-                  //TODO Insert to database
                   addQuote();
                 },
                 child: Text(
@@ -260,6 +260,6 @@ class _InsertQuoteState extends State<InsertQuote> {
         numberOfDeslikes: 0,
         comments: new List<String>());
     _dataBaseMethods.addQuote(quot);
-    Navigator.pop(context);
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Profile(_currentUser)));
   }
 }
