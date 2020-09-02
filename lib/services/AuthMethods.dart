@@ -1,4 +1,4 @@
-import 'package:feedme/Model/user.dart';
+import 'package:feedme/Model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthMethods{
@@ -6,7 +6,7 @@ class AuthMethods{
   final FirebaseAuth _auth =FirebaseAuth.instance;
   User _userFromFirebaseUSer(FirebaseUser user)
   {
-    return user !=null?User(userId:user.uid):null;
+    return user !=null?User(username: "",email: user.email,password: user.uid):null;
   }
   Future signInWithEmailAndPassword(String email,String password)async{
     try{
@@ -15,6 +15,7 @@ class AuthMethods{
       return _userFromFirebaseUSer(firebaseUser);
     }
     catch(e){
+      print("SighnIn ERROR : $e");
       print(e);
     }
   }
@@ -27,6 +28,7 @@ class AuthMethods{
       return _userFromFirebaseUSer(firebaseUser);
     }
     catch(e){
+      print("SighnUp ERROR : $e");
       found=false;
     }
   }

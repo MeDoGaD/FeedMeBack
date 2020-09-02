@@ -4,7 +4,8 @@ import 'package:feedme/pages/quotes.dart';
 import 'package:flutter/material.dart';
 import 'package:feedme/helper/authentication.dart';
 import 'package:feedme/pages/startpage.dart';
-
+import 'package:feedme/pages/login.dart';
+import 'package:feedme/pages/register.dart';
 void main() {
   runApp(MyApp());
 }
@@ -13,6 +14,7 @@ class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
 }
+
 
 class _MyAppState extends State<MyApp> {
   bool isLoggedIn=false;

@@ -1,3 +1,5 @@
+import 'package:feedme/model/user_model.dart';
+import 'package:feedme/pages/quotes.dart';
 import 'package:feedme/services/AuthMethods.dart';
 import 'package:flutter/material.dart';
 import 'package:feedme/widgets/widget.dart';
@@ -25,23 +27,30 @@ class _SignupState extends State<Register> {
   TextEditingController _password = new TextEditingController();
   TextEditingController _email = new TextEditingController();
 
+  User newUser;
+
   signMeUp(){
     if(formkey.currentState.validate()) {
 
       setState(() {isloading=true;});
 
+//      _username.text = "m";
+//      _email.text = "test@test.com";
+//      _password.text = "1";
       authMethods.signUpwithEmailAndPassword(_email.text, _password.text).then((value) {
-
+        newUser = new User(email: _email.text, password: _password.text,username: _username.text);
         if(AuthMethods.found==true) {
-          Map<String, String>usermap = {
-            "email": _email.text,
-            "name": _username.text,
-          };
+//          Map<String, String>usermap = {
+//            "email": _email.text,
+//            "name": _username.text,
+//          };
           HelperFunctions.saveUserLoggedIN(true);
           HelperFunctions.saveUsername(_username.text);
           HelperFunctions.saveUserEmail(_email.text);
-          dataBaseMethods.uploadUserInfo(usermap);
+          dataBaseMethods.uploadUserInfo(newUser);
           //TODO register successfully
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>AllQuotes(newUser)));
+
         }
         else
         {
@@ -60,7 +69,9 @@ class _SignupState extends State<Register> {
                         }),
                   ],);
               });
-          setState(() {isloading=false;});
+          setState(() {
+            isloading=false;
+          });
         }});
     }
   }
