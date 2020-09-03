@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 
 class User{
+  String id;
   String username;
   String email;
   String password;
@@ -12,14 +13,16 @@ class User{
     this.password = obj["password"];
   }
 
+  String get _id => id;
   String get _username => username;
   String get _email => email;
   String get _password => password;
 
-  User.fromSnapShot(DataSnapshot snapShot ){
-    username = snapShot.value["username"];
-    email = snapShot.value["email"];
-    password = snapShot.value["password"];
+  User.fromSnapShot(DataSnapshot snapshot ){
+    id = snapshot.key;
+    username = snapshot.value["username"];
+    email = snapshot.value["email"];
+    password = snapshot.value["password"];
   }
 
 }

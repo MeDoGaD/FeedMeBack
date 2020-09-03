@@ -255,11 +255,13 @@ class _InsertQuoteState extends State<InsertQuote> {
     quot = new Quot(
         title: _titleController.text,
         text: _textController.text,
-        author: _currentUser.username,
+        authorName: _currentUser.username,
+        authorID: _currentUser.id,
         numberOfLikes: 0,
         numberOfDeslikes: 0,
         comments: new List<String>());
     _dataBaseMethods.addQuote(quot);
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Profile(_currentUser)));
+//    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Profile(_currentUser)));
+  Navigator.pop(context);
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:feedme/UI_models/Quote_model.dart';
 import 'package:feedme/model/quot_model.dart';
 import 'package:feedme/model/user_model.dart';
 import 'package:feedme/pages/InsertQuote.dart';
@@ -138,14 +139,15 @@ class _ProfileState extends State<Profile> {
                   reverse: false,
                   itemCount: _quotes.length,
                   itemBuilder: (context, index) {
-                  if(_quotes[index].author==widget._currentUser.username) {
-                    return Quote(_quotes[index].author, _quotes[index].title, _quotes[index].text);}
+                  if(_quotes[index].authorName==widget._currentUser.username) {
+                    return Quote(_quotes[index].authorID,_quotes[index].authorName, _quotes[index].title, _quotes[index].text,widget._currentUser);
+                  }
                   else
                     {
                       return Container();
                     }
                   },
-                  separatorBuilder: (context, index) => SizedBox(height:_quotes[index].author==widget._currentUser.username?scheight * 1 / 30:0,),
+                  separatorBuilder: (context, index) => SizedBox(height:_quotes[index].authorName==widget._currentUser.username?scheight * 1 / 30:0,),
                 ),
               ),
             ]),
@@ -163,66 +165,66 @@ class _ProfileState extends State<Profile> {
 
 
 
-
-class Quote extends StatelessWidget {
-  final String username;
-  final String title;
-  final String quote;
-  DataBaseMethods _dataBaseMethods = new DataBaseMethods();
-
-  Quote(this.username, this.title, this.quote);
-  @override
-  Widget build(BuildContext context) {
-    double scwidth = MediaQuery.of(context).size.width;
-    double scheight = MediaQuery.of(context).size.height;
-    return Container(
-      width: scwidth * 0.8,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          border:
-          Border.all(color: Color.fromRGBO(251, 212, 237, 1), width: 1)),
-      child: Column(
-        children: [
-          Padding(
-
-            padding: EdgeInsets.only(left: scwidth * 0.17, top: 20 ),
-            child: Row(
-              children: [
-                Text(
-                  username,
-                  style: TextStyle(color: Colors.white, fontSize: username.length>6?18:24),
-                ),
-                SizedBox(
-                  width: scwidth * 0.1,
-                ),
-                RaisedButton(
-                    onPressed: () async {
-                      List<Quot> quotes = await _dataBaseMethods.getQuotes();
-                      print(quotes[0].title);
-                    },
-                    child: Text('Follow'),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40))),
-              ],
-            ),
-          ),
-          Text(
-            '___________________________',
-            style: TextStyle(
-                color: Color.fromRGBO(251, 212, 237, 1), fontSize: 20),
-          ),
-          Text(
-            title,
-            style: TextStyle(color: Colors.white, fontSize: 22),
-          ),
-          Text(
-            quote,
-            style: TextStyle(color: Colors.white70, fontSize: 18),
-          ),
-          SizedBox(height:scheight/40),
-          IconButton(padding: EdgeInsets.only(left: scwidth/1.5),icon:Icon(Icons.favorite,color: Colors.red,size:35 ,),)
-        ],
-      ),
-    );
-  }
-}
+//
+//class Quote extends StatelessWidget {
+//  final String username;
+//  final String title;
+//  final String quote;
+//  DataBaseMethods _dataBaseMethods = new DataBaseMethods();
+//
+//  Quote(this.username, this.title, this.quote);
+//  @override
+//  Widget build(BuildContext context) {
+//    double scwidth = MediaQuery.of(context).size.width;
+//    double scheight = MediaQuery.of(context).size.height;
+//    return Container(
+//      width: scwidth * 0.8,
+//      decoration: BoxDecoration(
+//          borderRadius: BorderRadius.circular(30),
+//          border:
+//          Border.all(color: Color.fromRGBO(251, 212, 237, 1), width: 1)),
+//      child: Column(
+//        children: [
+//          Padding(
+//
+//            padding: EdgeInsets.only(left: scwidth * 0.17, top: 20 ),
+//            child: Row(
+//              children: [
+//                Text(
+//                  username,
+//                  style: TextStyle(color: Colors.white, fontSize: username.length>6?18:24),
+//                ),
+//                SizedBox(
+//                  width: scwidth * 0.1,
+//                ),
+//                RaisedButton(
+//                    onPressed: () async {
+//                      List<Quot> quotes = await _dataBaseMethods.getQuotes();
+//                      print(quotes[0].title);
+//                    },
+//                    child: Text('Follow'),
+//                    shape: RoundedRectangleBorder(
+//                        borderRadius: BorderRadius.circular(40))),
+//              ],
+//            ),
+//          ),
+//          Text(
+//            '___________________________',
+//            style: TextStyle(
+//                color: Color.fromRGBO(251, 212, 237, 1), fontSize: 20),
+//          ),
+//          Text(
+//            title,
+//            style: TextStyle(color: Colors.white, fontSize: 22),
+//          ),
+//          Text(
+//            quote,
+//            style: TextStyle(color: Colors.white70, fontSize: 18),
+//          ),
+//          SizedBox(height:scheight/40),
+//          IconButton(padding: EdgeInsets.only(left: scwidth/1.5),icon:Icon(Icons.favorite,color: Colors.red,size:35 ,),)
+//        ],
+//      ),
+//    );
+//  }
+//}

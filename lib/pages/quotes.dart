@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:feedme/helper/authentication.dart';
 import 'package:feedme/pages/InsertQuote.dart';
+import 'package:feedme/UI_models/Quote_model.dart';
 
 class AllQuotes extends StatefulWidget {
   final User currentUser;
@@ -19,6 +20,8 @@ class _AllQuotesState extends State<AllQuotes> {
   final User _currentUser;
   DataBaseMethods _dataBaseMethods = new DataBaseMethods();
   StreamSubscription _onQuoteAddedSubscribtion;
+  StreamSubscription _onUserAddedSubscribtion;
+
   List<Quot> _quotes;
   _AllQuotesState(this._currentUser);
   @override
@@ -26,7 +29,12 @@ class _AllQuotesState extends State<AllQuotes> {
     // TODO: implement initState
     super.initState();
     _dataBaseMethods.getQuotes();
-    _onQuoteAddedSubscribtion = FirebaseDatabase.instance.reference().child('quot').onChildAdded.listen(onQuoteAdded);
+    _onQuoteAddedSubscribtion = FirebaseDatabase.instance
+        .reference()
+        .child('quot')
+        .onChildAdded
+        .listen(onQuoteAdded);
+//    _onUserAddedSubscribtion = FirebaseDatabase.instance.reference().child('user').onChildAdded.listen(onUserAdded);
     _quotes = new List<Quot>();
   }
 
@@ -84,10 +92,10 @@ class _AllQuotesState extends State<AllQuotes> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                  new Profile(_currentUser)));
+                                      new Profile(_currentUser)));
                         },
                         child: Text(
-                          _currentUser == null ? "":_currentUser.username,
+                          _currentUser == null ? "" : _currentUser.username,
                           style: TextStyle(color: Colors.white70),
                         )),
                     SizedBox(width: scwidth * 1 / 17),
@@ -106,9 +114,13 @@ class _AllQuotesState extends State<AllQuotes> {
                     top: scheight / 30,
                     left: scheight / 40,
                     right: scheight / 30),
-                child: GestureDetector(onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder:(context)=>InsertQuote(_currentUser)));
-                },
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => InsertQuote(_currentUser)));
+                  },
                   child: Container(
                     width: scwidth,
                     height: scheight / 8,
@@ -117,7 +129,13 @@ class _AllQuotesState extends State<AllQuotes> {
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.only(
                             bottomRight: Radius.circular(30),
-                            topLeft: Radius.circular(30))),child: Center(child: Text('Type a Quote here ... ',style: TextStyle(fontSize:22,color: Colors.grey[500]),),),
+                            topLeft: Radius.circular(30))),
+                    child: Center(
+                      child: Text(
+                        'Type a Quote here ... ',
+                        style: TextStyle(fontSize: 22, color: Colors.grey[500]),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -126,8 +144,12 @@ class _AllQuotesState extends State<AllQuotes> {
                   reverse: true,
                   itemCount: _quotes.length,
                   itemBuilder: (context, index) {
-                    return Quote(_quotes[index].author, _quotes[index].title,
-                        _quotes[index].text);
+                    return Quote(
+                        _quotes[index].authorID,
+                        _quotes[index].authorName,
+                        _quotes[index].title,
+                        _quotes[index].text,
+                        _currentUser);
                   },
                   separatorBuilder: (context, index) => SizedBox(
                     height: scheight * 1 / 30,
@@ -143,68 +165,5 @@ class _AllQuotesState extends State<AllQuotes> {
     setState(() {
       _quotes.add(new Quot.fromSnapShot(event.snapshot));
     });
-  }
-}
-
-class Quote extends StatelessWidget {
-  final String username;
-  final String title;
-  final String quote;
-  DataBaseMethods _dataBaseMethods = new DataBaseMethods();
-
-  Quote(this.username, this.title, this.quote);
-  @override
-  Widget build(BuildContext context) {
-    double scwidth = MediaQuery.of(context).size.width;
-    double scheight = MediaQuery.of(context).size.height;
-    return Container(
-      width: scwidth * 0.8,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          border:
-              Border.all(color: Color.fromRGBO(251, 212, 237, 1), width: 1)),
-      child: Column(
-        children: [
-          Padding(
-
-            padding: EdgeInsets.only(left: scwidth * 0.17, top: 20 ),
-            child: Row(
-              children: [
-                Text(
-                  username,
-                  style: TextStyle(color: Colors.white, fontSize: username.length>6?18:24),
-                ),
-                SizedBox(
-                  width: scwidth * 0.1,
-                ),
-                RaisedButton(
-                    onPressed: () async {
-                      List<Quot> quotes = await _dataBaseMethods.getQuotes();
-                      print(quotes[0].title);
-                    },
-                    child: Text('Follow'),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40))),
-              ],
-            ),
-          ),
-          Text(
-            '___________________________',
-            style: TextStyle(
-                color: Color.fromRGBO(251, 212, 237, 1), fontSize: 20),
-          ),
-          Text(
-            title,
-            style: TextStyle(color: Colors.white, fontSize: 22),
-          ),
-          Text(
-            quote,
-            style: TextStyle(color: Colors.white70, fontSize: 18),
-          ),
-          SizedBox(height:scheight/40),
-          IconButton(padding: EdgeInsets.only(left: scwidth/1.5),icon:Icon(Icons.favorite,color: Colors.red,size:35 ,),)
-        ],
-      ),
-    );
   }
 }
