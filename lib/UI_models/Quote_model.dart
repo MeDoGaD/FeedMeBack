@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:feedme/NewIcons/my_flutter_app_icons.dart' as dislike ;
 import 'package:feedme/model/quot_model.dart';
 import 'package:feedme/model/user_model.dart';
 import 'package:feedme/services/database.dart';
@@ -104,21 +104,56 @@ class _QuoteState extends State<Quote> {
             style: TextStyle(color: Colors.white70, fontSize: 18),
           ),
           SizedBox(height: scheight / 40),
-          IconButton(
-            onPressed: (){
-              setState(() {
-                Liked = !Liked;
-                Liked? widget._currentQuote.numberOfLikes++ : widget._currentQuote.numberOfLikes--;
-                _dataBaseMethods.likeQuote(widget._currentQuote, Liked);
-              });
-            },
-            padding: EdgeInsets.only(left: scwidth / 1.5),
-            icon: Icon(
-              Liked? Icons.favorite : Icons.favorite_border,
-              color: Liked?  Colors.red : Color.fromRGBO(255, 150, 140, 0.7),
-              size: 35,
+          Row(children: [
+            IconButton(
+              onPressed: (){
+                setState(() {
+                  Liked = !Liked;
+                  Liked? widget._currentQuote.numberOfLikes++ : widget._currentQuote.numberOfLikes--;
+                  _dataBaseMethods.likeQuote(widget._currentQuote, Liked);
+                });
+              },
+              padding: EdgeInsets.only(left: scwidth / 1.7),
+              icon: Icon(
+                Liked? Icons.favorite : Icons.favorite_border,
+                color: Liked?  Colors.red : Color.fromRGBO(255, 150, 140, 0.7),
+                size: 35,
+              ),
             ),
-          )
+
+            IconButton(
+              onPressed: (){
+                setState(() {
+                  Liked = !Liked;
+                  Liked? widget._currentQuote.numberOfLikes++ : widget._currentQuote.numberOfLikes--;
+                  _dataBaseMethods.likeQuote(widget._currentQuote, Liked);
+                });
+              },
+              padding: EdgeInsets.only(left: scwidth /30),
+              icon: Icon(
+                Liked?dislike.MyFlutterApp.thumbs_down_alt : dislike.MyFlutterApp.thumbs_down,
+                color: Liked?  Colors.blue : Color.fromRGBO(255, 150, 140, 0.7),
+                size: 35,
+              ),
+            ),
+
+            IconButton(
+              onPressed: (){
+                setState(() {
+                  Liked = !Liked;
+                  Liked? widget._currentQuote.numberOfLikes++ : widget._currentQuote.numberOfLikes--;
+                  _dataBaseMethods.likeQuote(widget._currentQuote, Liked);
+                });
+              },
+              padding: EdgeInsets.only(left: scwidth /30),
+              icon: Icon(
+                Liked? Icons.star : Icons.star_border,
+                color: Liked?  Colors.yellow : Color.fromRGBO(255, 150, 140, 0.7),
+                size: 35,
+              ),
+            ),
+          ],),
+
         ],
       ),
     );

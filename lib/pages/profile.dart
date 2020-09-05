@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:feedme/UI_models/Followers&Followings.dart';
 import 'package:feedme/UI_models/Quote_model.dart';
 import 'package:feedme/model/quot_model.dart';
 import 'package:feedme/model/user_model.dart';
@@ -18,6 +18,7 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  String FollowersOrNot;
   DataBaseMethods _dataBaseMethods = new DataBaseMethods();
   StreamSubscription _onQuoteAddedSubscribtion;
   List<Quot> _quotes;
@@ -36,6 +37,37 @@ class _ProfileState extends State<Profile> {
     super.dispose();
     _onQuoteAddedSubscribtion.cancel();
   }
+
+  void showBottomSheet(){
+    double scheight = MediaQuery
+        .of(context)
+        .size
+        .height;
+    double scwidth = MediaQuery
+        .of(context)
+        .size
+        .width;
+    showModalBottomSheet(context: context, builder: (BuildContext context){
+      return Column(children: [
+         Padding(
+           padding: const EdgeInsets.all(5.0),
+           child: Row(mainAxisAlignment: MainAxisAlignment.center,children: [
+             Text(FollowersOrNot,style: TextStyle(color: Colors.blue,fontSize: 30),)
+           ],),
+         ),
+        Expanded(
+        child: Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: ListView.separated (itemBuilder: (context,index){
+            return Followers_Followings("Medo Gad");
+          }, separatorBuilder:(context,index)=>SizedBox(height: scheight/40,) , itemCount: 20),
+        ),
+      ),
+      ],);
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     double scwidth = MediaQuery.of(context).size.width;
@@ -78,7 +110,9 @@ class _ProfileState extends State<Profile> {
                     ),
                     SizedBox(width: scwidth * 1 / 17),
                     GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+
+                        },
                         child: Text(
                           widget._currentUser == null
                               ? ""
@@ -103,6 +137,16 @@ class _ProfileState extends State<Profile> {
                   ],
                 ),
               ),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceAround,children: [
+                GestureDetector(onTap: (){
+                  FollowersOrNot="Followers";
+                  showBottomSheet();
+                },child: Text("Followers",style: TextStyle(color: Colors.white70,decoration: TextDecoration.underline),)),
+                GestureDetector(onTap: (){
+                  FollowersOrNot="Followings";
+                  showBottomSheet();
+                },child: Text("Followings",style: TextStyle(color: Colors.white70,decoration: TextDecoration.underline),)),
+              ],),
               Padding(
                 padding: EdgeInsets.only(
                     top: scheight / 30,
