@@ -28,7 +28,7 @@ class _AllQuotesState extends State<AllQuotes> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _dataBaseMethods.getQuotes();
+//    _dataBaseMethods.getQuotes();
     _onQuoteAddedSubscribtion = FirebaseDatabase.instance
         .reference()
         .child('quot')
@@ -144,12 +144,7 @@ class _AllQuotesState extends State<AllQuotes> {
                   reverse: true,
                   itemCount: _quotes.length,
                   itemBuilder: (context, index) {
-                    return Quote(
-                        _quotes[index].authorID,
-                        _quotes[index].authorName,
-                        _quotes[index].title,
-                        _quotes[index].text,
-                        _currentUser);
+                    return Quote(_currentUser,_quotes[index]);
                   },
                   separatorBuilder: (context, index) => SizedBox(
                     height: scheight * 1 / 30,

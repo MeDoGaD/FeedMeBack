@@ -97,23 +97,23 @@ class DataBaseMethods {
     });
   }
 
-  List<Quot> getQuotes() {
-    _quotReference.once().then((DataSnapshot snapshot) {
-      Map<dynamic, dynamic> values = snapshot.value;
-      List<Quot> quotes = new List<Quot>();
-      values.forEach((key, value) {
-        quotes.add(new Quot(
-            title: value['title'],
-            text: value['text'],
-            authorName: value['author'],
-            authorID: value['authorID'],
-            numberOfLikes: value['likes'],
-            numberOfDeslikes: value['deslikes'],
-            comments: value['comments']));
-      });
-      return quotes;
-    });
-  }
+//  List<Quot> getQuotes() {
+//    _quotReference.once().then((DataSnapshot snapshot) {
+//      Map<dynamic, dynamic> values = snapshot.value;
+//      List<Quot> quotes = new List<Quot>();
+//      values.forEach((key, value) {
+//        quotes.add(new Quot(
+//            title: value['title'],
+//            text: value['text'],
+//            authorName: value['author'],
+//            authorID: value['authorID'],
+//            numberOfLikes: value['likes'],
+//            numberOfDeslikes: value['deslikes'],
+//            comments: value['comments']));
+//      });
+//      return quotes;
+//    });
+//  }
 
   updateQuote(Quot quot) {
     _quotReference.child(quot.quotID).set({
@@ -125,5 +125,12 @@ class DataBaseMethods {
       'deslikes': quot.numberOfDeslikes,
       'comments': quot.comments
     });
+  }
+
+  void likeQuote(Quot quote, bool liked) {
+    _quotReference.child(quote.quotID).child('likes').set(quote.numberOfLikes);
+    liked?
+      _userReference.child(currentUser.id).child('likedQuotes').child(quote.quotID).set(quote.title):
+      _userReference.child(currentUser.id).child('likedQuotes').child(quote.quotID).remove();
   }
 }

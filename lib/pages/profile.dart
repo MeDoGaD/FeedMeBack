@@ -25,7 +25,7 @@ class _ProfileState extends State<Profile> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _dataBaseMethods.getQuotes();
+//    _dataBaseMethods.getQuotes();
     _onQuoteAddedSubscribtion = FirebaseDatabase.instance.reference().child('quot').onChildAdded.listen(onQuoteAdded);
     _quotes = new List<Quot>();
   }
@@ -140,7 +140,7 @@ class _ProfileState extends State<Profile> {
                   itemCount: _quotes.length,
                   itemBuilder: (context, index) {
                   if(_quotes[index].authorName==widget._currentUser.username) {
-                    return Quote(_quotes[index].authorID,_quotes[index].authorName, _quotes[index].title, _quotes[index].text,widget._currentUser);
+                    return Quote(widget._currentUser,_quotes[index]);
                   }
                   else
                     {
