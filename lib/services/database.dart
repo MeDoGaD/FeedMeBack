@@ -28,24 +28,22 @@ class DataBaseMethods {
         .getDocuments();
   }
 
-   getUserByUseremail(String useremail) {
+  getUserByUseremail(String useremail) {
 //    return await Firestore.instance
 //        .collection("Users")
 //        .where("email", isEqualTo: useremail)
 //        .getDocuments();
-     _userReference.once().then((DataSnapshot snapshot) {
+    _userReference.once().then((DataSnapshot snapshot) {
 //          return new User.map(snapShot.value);
       Map<dynamic, dynamic> values = snapshot.value;
       values.forEach((key, values) {
-        if (values['email'] == useremail)
-          {
-            currentUser=new User(
-                password: values['password'],
-                email: values['email'],
-                username: values['username']);
+        if (values['email'] == useremail) {
+          currentUser = new User(
+              password: values['password'],
+              email: values['email'],
+              username: values['username']);
           // return user.username;
-          }
-
+        }
       });
     });
 //      return _userReference.child(useremail);
@@ -62,46 +60,77 @@ class DataBaseMethods {
   }
 
 //  User
+  followUser(String id, String username, bool followed) {
+    try {
+      if (!followed) {
+        _userReference
+            .child(id)
+            .child('followers')
+            .push()
+            .set({'username': currentUser.username, 'id': currentUser.id});
+        _userReference
+            .child(currentUser.id)
+            .child('following')
+            .push()
+            .set({'username': username, 'id': id});
+      }
+      else{
+        _userReference.child(id).child('followers').child(currentUser.id).remove();
+        _userReference.child(currentUser.id).child('following').child(id).remove();
+      }
+    } catch (e) {
+      print("ERROR->${e.toString()}");
+    }
+    ;
+  }
 
 //  Quot
   addQuote(Quot quot) {
     _quotReference.push().set({
       'title': quot.title,
       'text': quot.text,
-      'author': quot.author,
+      'author': quot.authorName,
+      'authorID': quot.authorID,
       'likes': quot.numberOfLikes,
       'deslikes': quot.numberOfDeslikes,
       'comments': quot.comments
     });
-
   }
 
-  List<Quot> getQuotes() {
-    _quotReference.once().then((DataSnapshot snapshot){
-      Map<dynamic,dynamic> values = snapshot.value;
-      List<Quot> quotes = new List<Quot>();
-      values.forEach((key, value) {
-        quotes.add(new Quot(
-            title:value['title'],
-            text:value['text'],
-            author:value['author'],
-            numberOfLikes:value['likes'],
-            numberOfDeslikes:value['deslikes'],
-            comments: value['comments'])
-        );
-      });
-      return quotes;
+//  List<Quot> getQuotes() {
+//    _quotReference.once().then((DataSnapshot snapshot) {
+//      Map<dynamic, dynamic> values = snapshot.value;
+//      List<Quot> quotes = new List<Quot>();
+//      values.forEach((key, value) {
+//        quotes.add(new Quot(
+//            title: value['title'],
+//            text: value['text'],
+//            authorName: value['author'],
+//            authorID: value['authorID'],
+//            numberOfLikes: value['likes'],
+//            numberOfDeslikes: value['deslikes'],
+//            comments: value['comments']));
+//      });
+//      return quotes;
+//    });
+//  }
 
-    });
-  }
   updateQuote(Quot quot) {
     _quotReference.child(quot.quotID).set({
       'title': quot.title,
       'text': quot.text,
-      'author': quot.author,
+      'author': quot.authorName,
+      'authorID': quot.authorID,
       'likes': quot.numberOfLikes,
       'deslikes': quot.numberOfDeslikes,
       'comments': quot.comments
     });
+  }
+
+  void likeQuote(Quot quote, bool liked) {
+    _quotReference.child(quote.quotID).child('likes').set(quote.numberOfLikes);
+    liked?
+      _userReference.child(currentUser.id).child('likedQuotes').child(quote.quotID).set(quote.title):
+      _userReference.child(currentUser.id).child('likedQuotes').child(quote.quotID).remove();
   }
 }

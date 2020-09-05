@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:feedme/model/user_model.dart';
 import 'package:feedme/pages/quotes.dart';
@@ -27,6 +29,15 @@ class _loginState extends State<Login>{
   DataBaseMethods dataBaseMethods=new DataBaseMethods();
   bool isloading=false;
   QuerySnapshot snapshotUserInfo;
+  StreamSubscription _onUserAddedSubscribtion;
+  User _currentUser;
+  @override
+  void initState(){
+    super.initState();
+//    _onUserAddedSubscribtion = FirebaseDatabase.instance.reference().child('user').onChildAdded.listen(onUserAdded);
+
+//    _currentUser = new User();
+  }
   signIn()
   {
 
@@ -38,15 +49,18 @@ class _loginState extends State<Login>{
 //    });
     setState(() {
       isloading=true;
+      _onUserAddedSubscribtion = FirebaseDatabase.instance.reference().child('user').onChildAdded.listen(onUserAdded);
     });
     HelperFunctions.saveUserEmail(_useremail.text);
     HelperFunctions.saveUserLoggedIN(true);
-    dataBaseMethods.getUserByUseremail(_useremail.text);
-    HelperFunctions.saveUsername(DataBaseMethods.currentUser.username);
+//    dataBaseMethods.getUserByUseremail(_useremail.text);
+    if(_currentUser != null)
+      HelperFunctions.saveUsername(_currentUser.username);
     authMethods.signInWithEmailAndPassword(_useremail.text, _password.text).then((value){
       if(value!=null){
         // TODO login success
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>AllQuotes(DataBaseMethods.currentUser)));
+        DataBaseMethods.currentUser = _currentUser;
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>AllQuotes(_currentUser)));
       }
       else
       {
@@ -107,5 +121,13 @@ class _loginState extends State<Login>{
           ],),),
         ),
       ) ,);
+  }
+
+  void onUserAdded(Event event) {
+    setState(() {
+      if(event.snapshot.value['email'] == _useremail.text){
+        _currentUser =new User.fromSnapShot(event.snapshot);
+      }
+    });
   }
 }
