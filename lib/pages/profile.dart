@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:feedme/UI_models/Followers&Followings.dart';
+import 'package:feedme/UI_models/Followers&Followings&Stared.dart';
 import 'package:feedme/UI_models/Quote_model.dart';
 import 'package:feedme/model/quot_model.dart';
 import 'package:feedme/model/user_model.dart';
@@ -18,7 +18,7 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  String FollowersOrNot;
+  String BottomSheetState;
   DataBaseMethods _dataBaseMethods = new DataBaseMethods();
   StreamSubscription _onQuoteAddedSubscribtion;
   List<Quot> _quotes;
@@ -52,14 +52,21 @@ class _ProfileState extends State<Profile> {
          Padding(
            padding: const EdgeInsets.all(5.0),
            child: Row(mainAxisAlignment: MainAxisAlignment.center,children: [
-             Text(FollowersOrNot,style: TextStyle(color: Colors.blue,fontSize: 30),)
+             Text(BottomSheetState,style: TextStyle(color: Colors.blue,fontSize: 30),)
            ],),
          ),
         Expanded(
         child: Padding(
           padding: const EdgeInsets.all(5.0),
           child: ListView.separated (itemBuilder: (context,index){
-            return Followers_Followings("Medo Gad");
+            if(BottomSheetState!="Stared")
+              {
+                return Followers_Followings("Medo Gad");
+              }
+            else
+              {
+                return StaredMsgs("Medo Gad", "this is a test quote",true);
+              }
           }, separatorBuilder:(context,index)=>SizedBox(height: scheight/40,) , itemCount: 20),
         ),
       ),
@@ -73,128 +80,134 @@ class _ProfileState extends State<Profile> {
     double scwidth = MediaQuery.of(context).size.width;
     double scheight = MediaQuery.of(context).size.height;
     return Scaffold(
-        backgroundColor: Color.fromRGBO(30, 73, 117, 80),
-        body: Padding(
-            padding: EdgeInsets.only(top: scheight * 1 / 15),
-            child: Column(children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Container(
-                      width: scwidth * 1 / 8,
-                      height: scheight * 1 / 16,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage('assets/feed1.png'),
-                              fit: BoxFit.fill),
-                          shape: BoxShape.circle),
-                    ),
-
-                    SizedBox(width: scwidth * 1 / 15),
-                    Container(
-                        width: scwidth * 1 / 4,
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Search',
-                            hintStyle: TextStyle(color: Colors.white70),
-                          ),
-                          style: TextStyle(color: Colors.white),
-                        )),
-                    IconButton(
-                      icon: Icon(
-                        Icons.search,
-                        color: Colors.white70,
+        //backgroundColor:Color.fromRGBO(30, 73, 117, 80),
+        body: Container(decoration: BoxDecoration(gradient: LinearGradient(colors: [Color.fromRGBO(30, 73, 117, 80),Colors.deepPurple[700]])),
+          child: Padding(
+              padding: EdgeInsets.only(top: scheight * 1 / 15),
+              child: Column(children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: scwidth * 1 / 8,
+                        height: scheight * 1 / 16,
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage('assets/feed1.png'),
+                                fit: BoxFit.fill),
+                            shape: BoxShape.circle),
                       ),
-                      onPressed: () {},
-                    ),
-                    SizedBox(width: scwidth * 1 / 17),
-                    GestureDetector(
-                        onTap: () {
 
+                      SizedBox(width: scwidth * 1 / 15),
+                      Container(
+                          width: scwidth * 1 / 4,
+                          child: TextField(
+                            decoration: InputDecoration(
+                              hintText: 'Search',
+                              hintStyle: TextStyle(color: Colors.white70),
+                            ),
+                            style: TextStyle(color: Colors.white),
+                          )),
+                      IconButton(
+                        icon: Icon(
+                          Icons.search,
+                          color: Colors.white70,
+                        ),
+                        onPressed: () {},
+                      ),
+                      SizedBox(width: scwidth * 1 / 17),
+                      GestureDetector(
+                          onTap: () {
+
+                          },
+                          child: Text(
+                            widget._currentUser == null
+                                ? ""
+                                : widget._currentUser.username,
+                            style: TextStyle(color: Colors.white70),
+                          )),
+                       SizedBox(width: scwidth * 1 / 20),
+
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      new AllQuotes(widget._currentUser)));
                         },
                         child: Text(
-                          widget._currentUser == null
-                              ? ""
-                              : widget._currentUser.username,
+                          'Home',
                           style: TextStyle(color: Colors.white70),
-                        )),
-                     SizedBox(width: scwidth * 1 / 20),
-
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    new AllQuotes(widget._currentUser)));
-                      },
-                      child: Text(
-                        'Home',
-                        style: TextStyle(color: Colors.white70),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceAround,children: [
-                GestureDetector(onTap: (){
-                  FollowersOrNot="Followers";
-                  showBottomSheet();
-                },child: Text("Followers",style: TextStyle(color: Colors.white70,decoration: TextDecoration.underline),)),
-                GestureDetector(onTap: (){
-                  FollowersOrNot="Followings";
-                  showBottomSheet();
-                },child: Text("Followings",style: TextStyle(color: Colors.white70,decoration: TextDecoration.underline),)),
-              ],),
-              Padding(
-                padding: EdgeInsets.only(
-                    top: scheight / 30,
-                    left: scheight / 40,
-                    right: scheight / 30),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                            new InsertQuote(widget._currentUser)));
-                  },
-                  child: Container(
-                    width: scwidth,
-                    height: scheight / 8,
-                    decoration: BoxDecoration(
-                        color: Colors.white70,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(30),
-                            topLeft: Radius.circular(30))),
-                    child: Center(
-                      child: Text(
-                        'Type a Quote here ... ',
-                        style: TextStyle(fontSize: 22, color: Colors.grey[500]),
+                Row(mainAxisAlignment: MainAxisAlignment.spaceAround,children: [
+                  GestureDetector(onTap: (){
+                    BottomSheetState="Followers";
+                    showBottomSheet();
+                  },child: Text("Followers",style: TextStyle(color: Colors.white70,decoration: TextDecoration.underline),)),
+                  GestureDetector(onTap: (){
+                    BottomSheetState="Followings";
+                    showBottomSheet();
+                  },child: Text("Followings",style: TextStyle(color: Colors.white70,decoration: TextDecoration.underline),)),
+                  GestureDetector(onTap: (){
+                    BottomSheetState="Stared";
+                    showBottomSheet();
+                  },child: Text("Stared Messages",style: TextStyle(color: Colors.white70,decoration: TextDecoration.underline),)),
+                ],),
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: scheight / 30,
+                      left: scheight / 40,
+                      right: scheight / 30),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                              new InsertQuote(widget._currentUser)));
+                    },
+                    child: Container(
+                      width: scwidth,
+                      height: scheight / 8,
+                      decoration: BoxDecoration(
+                          color: Colors.white70,
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.only(
+                              bottomRight: Radius.circular(30),
+                              topLeft: Radius.circular(30))),
+                      child: Center(
+                        child: Text(
+                          'Type a Quote here ... ',
+                          style: TextStyle(fontSize: 22, color: Colors.grey[500]),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: ListView.separated(
-                  reverse: false,
-                  itemCount: _quotes.length,
-                  itemBuilder: (context, index) {
-                  if(_quotes[index].authorName==widget._currentUser.username) {
-                    return Quote(widget._currentUser,_quotes[index]);
-                  }
-                  else
-                    {
-                      return Container();
+                Expanded(
+                  child: ListView.separated(
+                    reverse: false,
+                    itemCount: _quotes.length,
+                    itemBuilder: (context, index) {
+                    if(_quotes[index].authorName==widget._currentUser.username) {
+                      return Quote(widget._currentUser,_quotes[index]);
                     }
-                  },
-                  separatorBuilder: (context, index) => SizedBox(height:_quotes[index].authorName==widget._currentUser.username?scheight * 1 / 30:0,),
+                    else
+                      {
+                        return Container();
+                      }
+                    },
+                    separatorBuilder: (context, index) => SizedBox(height:_quotes[index].authorName==widget._currentUser.username?scheight * 1 / 30:0,),
+                  ),
                 ),
-              ),
-            ]),
+              ]),
+          ),
         ),
 
     );
