@@ -5,10 +5,10 @@ import 'package:feedme/services/database.dart';
 import 'package:flutter/material.dart';
 
 class InsertQuote extends StatefulWidget {
-  User _currentUser;
-  InsertQuote(this._currentUser);
+  User _currentUser = DataBaseMethods.currentUser;
+//  InsertQuote(this._currentUser);
 
-  _InsertQuoteState createState() => _InsertQuoteState(_currentUser);
+  _InsertQuoteState createState() => _InsertQuoteState();
 }
 
 var textColor = Colors.white;
@@ -18,8 +18,6 @@ class _InsertQuoteState extends State<InsertQuote> {
   TextEditingController _textController = new TextEditingController();
   Quot quot;
   DataBaseMethods _dataBaseMethods = new DataBaseMethods();
-  User _currentUser;
-  _InsertQuoteState(this._currentUser);
   @override
   Widget build(BuildContext context) {
     double scwidth = MediaQuery.of(context).size.width;
@@ -255,8 +253,8 @@ class _InsertQuoteState extends State<InsertQuote> {
     quot = new Quot(
         title: _titleController.text,
         text: _textController.text,
-        authorName: _currentUser.username,
-        authorID: _currentUser.id,
+        authorName: widget._currentUser.username,
+        authorID: widget._currentUser.id,
         numberOfLikes: 0,
         numberOfDeslikes: 0,
         comments: new List<String>());

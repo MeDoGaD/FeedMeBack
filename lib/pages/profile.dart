@@ -11,8 +11,8 @@ import 'package:flutter/material.dart';
 
 class Profile extends StatefulWidget {
 
-  final User _currentUser;
-  Profile(this._currentUser);
+  final User _currentUser = DataBaseMethods.currentUser;
+//  Profile(this._currentUser);
   @override
   _ProfileState createState() => _ProfileState();
 }
@@ -135,7 +135,7 @@ class _ProfileState extends State<Profile> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      new AllQuotes(widget._currentUser)));
+                                      new AllQuotes()));
                         },
                         child: Text(
                           'Home',
@@ -170,7 +170,7 @@ class _ProfileState extends State<Profile> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                              new InsertQuote(widget._currentUser)));
+                              new InsertQuote()));
                     },
                     child: Container(
                       width: scwidth,

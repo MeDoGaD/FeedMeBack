@@ -11,19 +11,18 @@ import 'package:feedme/pages/InsertQuote.dart';
 import 'package:feedme/UI_models/Quote_model.dart';
 
 class AllQuotes extends StatefulWidget {
-  final User currentUser;
-  const AllQuotes(this.currentUser);
-  _AllQuotesState createState() => _AllQuotesState(currentUser);
+  User currentUser = DataBaseMethods.currentUser;
+//  const AllQuotes(this.currentUser);
+  _AllQuotesState createState() => _AllQuotesState();
 }
 
 class _AllQuotesState extends State<AllQuotes> {
-  final User _currentUser;
   DataBaseMethods _dataBaseMethods = new DataBaseMethods();
   StreamSubscription _onQuoteAddedSubscribtion;
   StreamSubscription _onUserAddedSubscribtion;
 
   List<Quot> _quotes;
-  _AllQuotesState(this._currentUser);
+//  _AllQuotesState(w);
   @override
   void initState() {
     // TODO: implement initState
@@ -92,10 +91,10 @@ class _AllQuotesState extends State<AllQuotes> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      new Profile(_currentUser)));
+                                      new Profile()));
                         },
                         child: Text(
-                          _currentUser == null ? "" : _currentUser.username,
+                          widget.currentUser == null ? "" : widget.currentUser.username,
                           style: TextStyle(color: Colors.white70),
                         )),
                     SizedBox(width: scwidth * 1 / 17),
@@ -119,7 +118,7 @@ class _AllQuotesState extends State<AllQuotes> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => InsertQuote(_currentUser)));
+                            builder: (context) => InsertQuote()));
                   },
                   child: Container(
                     width: scwidth,
@@ -144,7 +143,7 @@ class _AllQuotesState extends State<AllQuotes> {
                   reverse: true,
                   itemCount: _quotes.length,
                   itemBuilder: (context, index) {
-                    return Quote(_currentUser,_quotes[index]);
+                    return Quote(widget.currentUser,_quotes[index]);
                   },
                   separatorBuilder: (context, index) => SizedBox(
                     height: scheight * 1 / 30,

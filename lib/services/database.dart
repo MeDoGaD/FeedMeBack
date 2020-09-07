@@ -133,4 +133,18 @@ class DataBaseMethods {
       _userReference.child(currentUser.id).child('likedQuotes').child(quote.quotID).set(quote.title):
       _userReference.child(currentUser.id).child('likedQuotes').child(quote.quotID).remove();
   }
+
+  void deslikeQuote(Quot quote, bool deslike) {
+    _quotReference.child(quote.quotID).child('deslikes').set(quote.numberOfDeslikes);
+    deslike?
+        _userReference.child(currentUser.id).child('deslikedQuotes').child(quote.quotID).set(quote.title):
+        _userReference.child(currentUser.id).child('deslikedQuotes').child(quote.quotID).remove();
+
+  }
+
+  void starQuote(Quot quote, bool stared) {
+    stared?
+      _userReference.child(currentUser.id).child('staredQuotes').child(quote.quotID).set(quote.title):
+      _userReference.child(currentUser.id).child('staredQuotes').child(quote.quotID).remove();
+  }
 }

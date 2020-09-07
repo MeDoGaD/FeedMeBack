@@ -49,38 +49,40 @@ class _loginState extends State<Login>{
 //    });
     setState(() {
       isloading=true;
-      _onUserAddedSubscribtion = FirebaseDatabase.instance.reference().child('user').onChildAdded.listen(onUserAdded);
     });
+    _onUserAddedSubscribtion = FirebaseDatabase.instance.reference().child('user').onChildAdded.listen(onUserAdded);
     HelperFunctions.saveUserEmail(_useremail.text);
     HelperFunctions.saveUserLoggedIN(true);
 //    dataBaseMethods.getUserByUseremail(_useremail.text);
-    if(_currentUser != null)
+    if(_currentUser != null) {
       HelperFunctions.saveUsername(_currentUser.username);
-    authMethods.signInWithEmailAndPassword(_useremail.text, _password.text).then((value){
-      if(value!=null){
-        // TODO login success
-        DataBaseMethods.currentUser = _currentUser;
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>AllQuotes(_currentUser)));
-      }
-      else
-      {
-        showDialog(context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(title: Text('Login failed :( ',
-                style: TextStyle(color: Colors.deepPurple),),
-                content: Text('The username or password isn'+"'"+'t correct'),
-                actions: <Widget>[
-                  FlatButton(child: Text('Ok',
-                    style: TextStyle(
-                        color: Colors.deepPurple),),
-                      onPressed: () {
-                        HapticFeedback.vibrate();
-                        Navigator.of(context).pop();
-                      }),
-                ],);
-            });
-      }
-    });
+      authMethods.signInWithEmailAndPassword(_useremail.text, _password.text)
+          .then((value) {
+        if (value != null) {
+          // TODO login success
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => AllQuotes()));
+        }
+        else {
+          showDialog(context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(title: Text('Login failed :( ',
+                  style: TextStyle(color: Colors.deepPurple),),
+                  content: Text(
+                      'The username or password isn' + "'" + 't correct'),
+                  actions: <Widget>[
+                    FlatButton(child: Text('Ok',
+                      style: TextStyle(
+                          color: Colors.deepPurple),),
+                        onPressed: () {
+                          HapticFeedback.vibrate();
+                          Navigator.of(context).pop();
+                        }),
+                  ],);
+              });
+        }
+      });
+    }
   }
 
   @override
@@ -127,6 +129,7 @@ class _loginState extends State<Login>{
     setState(() {
       if(event.snapshot.value['email'] == _useremail.text){
         _currentUser =new User.fromSnapShot(event.snapshot);
+        DataBaseMethods.currentUser = _currentUser;
       }
     });
   }
