@@ -66,13 +66,13 @@ class DataBaseMethods {
         _userReference
             .child(id)
             .child('followers')
-            .push()
-            .set({'username': currentUser.username, 'id': currentUser.id});
+            .child(currentUser.id)
+            .set(currentUser.username);
         _userReference
             .child(currentUser.id)
             .child('following')
-            .push()
-            .set({'username': username, 'id': id});
+            .child(id)
+            .set(username);
       }
       else{
         _userReference.child(id).child('followers').child(currentUser.id).remove();

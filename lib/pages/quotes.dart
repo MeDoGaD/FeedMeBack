@@ -87,7 +87,7 @@ class _AllQuotesState extends State<AllQuotes> {
                     SizedBox(width: scwidth * 1 / 20),
                     GestureDetector(
                         onTap: () {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
