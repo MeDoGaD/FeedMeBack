@@ -23,32 +23,41 @@ class Quote extends StatefulWidget {
 
 class _QuoteState extends State<Quote> {
   DataBaseMethods _dataBaseMethods = new DataBaseMethods();
-  StreamSubscription _onFollowingAddedSubscribtion;
-  StreamSubscription _onLikedgAddedSubscribtion;
+  StreamSubscription _onQuoteAddedSubscribtion;
   bool Followed;
-  bool Liked;
+  bool liked;
+  bool deslike;
+  bool stared;
+  Map<dynamic, dynamic> following,likes,deslikes,stares;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     Followed = false;
-    Liked = false;
-    _onFollowingAddedSubscribtion = FirebaseDatabase.instance
-        .reference()
-        .child('user')
-        .child(widget._currentUser.id)
-        .child('following')
-        .onChildAdded
-        .listen(onFollowingAdded);
-    _onLikedgAddedSubscribtion = FirebaseDatabase.instance
+    liked = false;
+    deslike = false;
+    stared = false;
+//    _onFollowingAddedSubscribtion = FirebaseDatabase.instance
+//        .reference()
+//        .child('user')
+//        .child(widget._currentUser.id)
+//        .child('following')
+//        .onChildAdded
+//        .listen(onFollowingAdded);
+    _onQuoteAddedSubscribtion = FirebaseDatabase.instance
     .reference()
     .child('user')
     .child(widget._currentUser.id)
-    .child('likedQuotes')
     .onChildAdded
-    .listen(onLikedAdded);
+    .listen(onQuoteAdded);
   }
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _onQuoteAddedSubscribtion.cancel();
+  }
   @override
   Widget build(BuildContext context) {
     double scwidth = MediaQuery.of(context).size.width;
@@ -108,15 +117,20 @@ class _QuoteState extends State<Quote> {
             IconButton(
               onPressed: (){
                 setState(() {
-                  Liked = !Liked;
-                  Liked? widget._currentQuote.numberOfLikes++ : widget._currentQuote.numberOfLikes--;
-                  _dataBaseMethods.likeQuote(widget._currentQuote, Liked);
+                  liked = !liked;
+                  if(deslike){
+                    deslike = false;
+                    widget._currentQuote.numberOfDeslikes--;
+                    _dataBaseMethods.deslikeQuote(widget._currentQuote,deslike);
+                  }
+                  liked? widget._currentQuote.numberOfLikes++ : widget._currentQuote.numberOfLikes--;
+                  _dataBaseMethods.likeQuote(widget._currentQuote, liked);
                 });
               },
               padding: EdgeInsets.only(left: scwidth / 1.7),
               icon: Icon(
-                Liked? Icons.favorite : Icons.favorite_border,
-                color: Liked?  Colors.red : Color.fromRGBO(255, 150, 140, 0.7),
+                liked? Icons.favorite : Icons.favorite_border,
+                color: liked?  Colors.red : Color.fromRGBO(255, 150, 140, 0.7),
                 size: 35,
               ),
             ),
@@ -124,15 +138,21 @@ class _QuoteState extends State<Quote> {
             IconButton(
               onPressed: (){
                 setState(() {
-                  Liked = !Liked;
-                  Liked? widget._currentQuote.numberOfLikes++ : widget._currentQuote.numberOfLikes--;
-                  _dataBaseMethods.likeQuote(widget._currentQuote, Liked);
+                  deslike = !deslike;
+                  if(liked){
+                    liked = false;
+                    widget._currentQuote.numberOfLikes--;
+                    _dataBaseMethods.likeQuote(widget._currentQuote, liked);
+                  }
+                  deslike?
+                    widget._currentQuote.numberOfDeslikes++: widget._currentQuote.numberOfDeslikes--;
+                  _dataBaseMethods.deslikeQuote(widget._currentQuote,deslike);
                 });
               },
               padding: EdgeInsets.only(left: scwidth /30),
               icon: Icon(
-                Liked?dislike.MyFlutterApp.thumbs_down_alt : dislike.MyFlutterApp.thumbs_down,
-                color: Liked?  Colors.blue : Color.fromRGBO(255, 150, 140, 0.7),
+                deslike?dislike.MyFlutterApp.thumbs_down_alt : dislike.MyFlutterApp.thumbs_down,
+                color: deslike?  Colors.blue : Color.fromRGBO(255, 150, 140, 0.7),
                 size: 35,
               ),
             ),
@@ -140,15 +160,14 @@ class _QuoteState extends State<Quote> {
             IconButton(
               onPressed: (){
                 setState(() {
-                  Liked = !Liked;
-                  Liked? widget._currentQuote.numberOfLikes++ : widget._currentQuote.numberOfLikes--;
-                  _dataBaseMethods.likeQuote(widget._currentQuote, Liked);
+                  stared = !stared;
+                  _dataBaseMethods.starQuote(widget._currentQuote,stared);
                 });
               },
               padding: EdgeInsets.only(left: scwidth /30),
               icon: Icon(
-                Liked? Icons.star : Icons.star_border,
-                color: Liked?  Colors.yellow : Color.fromRGBO(255, 150, 140, 0.7),
+                stared? Icons.star : Icons.star_border,
+                color: stared?  Colors.yellow : Color.fromRGBO(255, 150, 140, 0.7),
                 size: 35,
               ),
             ),
@@ -158,18 +177,37 @@ class _QuoteState extends State<Quote> {
       ),
     );
   }
-
-  void onFollowingAdded(Event event) {
+  void onQuoteAdded(Event event) {
     setState(() {
-      if(widget._currentQuote.authorID == event.snapshot.value['id'])
-        Followed=true;
+      if(following==null||likes==null||deslikes==null||stares==null) {
+        try {
+          if (event.snapshot.key == "following") {
+            following = event.snapshot.value;
+            if (following.containsKey(widget._currentQuote.authorID))
+              Followed = true;
+          }
+          if (event.snapshot.key == "likedQuotes") {
+            likes = event.snapshot.value;
+            if (likes.containsKey(widget._currentQuote.quotID))
+              liked = true;
+          }
+          if (event.snapshot.key == "deslikedQuotes") {
+            deslikes = event.snapshot.value;
+            if (deslikes.containsKey(widget._currentQuote.quotID))
+              deslike = true;
+          }
+          if (event.snapshot.key == "staredQuotes") {
+            stares = event.snapshot.value;
+            if (stares.containsKey(widget._currentQuote.quotID))
+              stared = true;
+          }
+        }
+        catch (e) {
+          print(e.toString());
+        }
+      }
     });
-  }
 
-  void onLikedAdded(Event event) {
-    setState(() {
-      if(event.snapshot.key == widget._currentQuote.quotID)
-        Liked = true;
-    });
+
   }
 }

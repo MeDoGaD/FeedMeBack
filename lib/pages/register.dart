@@ -48,8 +48,9 @@ class _SignupState extends State<Register> {
           HelperFunctions.saveUsername(_username.text);
           HelperFunctions.saveUserEmail(_email.text);
           dataBaseMethods.uploadUserInfo(newUser);
+          DataBaseMethods.currentUser = newUser;
           //TODO register successfully
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>AllQuotes(newUser)));
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>AllQuotes()));
 
         }
         else

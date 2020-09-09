@@ -66,13 +66,13 @@ class DataBaseMethods {
         _userReference
             .child(id)
             .child('followers')
-            .push()
-            .set({'username': currentUser.username, 'id': currentUser.id});
+            .child(currentUser.id)
+            .set(currentUser.username);
         _userReference
             .child(currentUser.id)
             .child('following')
-            .push()
-            .set({'username': username, 'id': id});
+            .child(id)
+            .set(username);
       }
       else{
         _userReference.child(id).child('followers').child(currentUser.id).remove();
@@ -132,5 +132,19 @@ class DataBaseMethods {
     liked?
       _userReference.child(currentUser.id).child('likedQuotes').child(quote.quotID).set(quote.title):
       _userReference.child(currentUser.id).child('likedQuotes').child(quote.quotID).remove();
+  }
+
+  void deslikeQuote(Quot quote, bool deslike) {
+    _quotReference.child(quote.quotID).child('deslikes').set(quote.numberOfDeslikes);
+    deslike?
+        _userReference.child(currentUser.id).child('deslikedQuotes').child(quote.quotID).set(quote.title):
+        _userReference.child(currentUser.id).child('deslikedQuotes').child(quote.quotID).remove();
+
+  }
+
+  void starQuote(Quot quote, bool stared) {
+    stared?
+      _userReference.child(currentUser.id).child('staredQuotes').child(quote.quotID).set(quote.title):
+      _userReference.child(currentUser.id).child('staredQuotes').child(quote.quotID).remove();
   }
 }
