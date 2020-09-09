@@ -71,15 +71,17 @@ class _InsertQuoteState extends State<InsertQuote> {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 2),
-                      child: Container(
-                          child: TextField(
-                        controller: _textController,
-                        style: TextStyle(color: textColor, fontSize: 16),
-                        decoration: InputDecoration(
-                            hintText: 'Type your Quote here .... ',
-                            hintStyle:
-                                TextStyle(fontSize: 20, color: Colors.white30)),
-                      )),
+                      child: Expanded(
+                        child: ConstrainedBox(constraints: BoxConstraints(maxHeight: scheight*1/3),
+                            child: TextField(maxLines: null,
+                          controller: _textController,
+                          style: TextStyle(color: textColor, fontSize: 16),
+                          decoration: InputDecoration(
+                              hintText: 'Type your Quote here .... ',
+                              hintStyle:
+                                  TextStyle(fontSize: 20, color: Colors.white30)),
+                        )),
+                      ),
                     ),
                   ],
                 ),
