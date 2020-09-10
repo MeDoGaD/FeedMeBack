@@ -11,6 +11,9 @@ import 'package:flutter/material.dart';
 
 class Profile extends StatefulWidget {
   final User _currentUser = DataBaseMethods.currentUser;
+  List<Quot> _quotes;
+
+  Profile(this._quotes);
 
   @override
   _ProfileState createState() => _ProfileState();
@@ -23,11 +26,17 @@ class _ProfileState extends State<Profile> {
   StreamSubscription _onUserAddedSubscribtion;
   List<Quot> _quotes;
 
-  Map<dynamic, dynamic> _followers, _following, _stars;
+  Map<dynamic, dynamic> _followers, _following, _stars, _likes, _deslikes;
+
+  List<Quot> _staredQuotes;
+  int _staredQuotesIndex;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _quotes = widget._quotes;
+    _staredQuotes = new List<Quot>();
 //    _dataBaseMethods.getQuotes();
     _onQuoteAddedSubscribtion = FirebaseDatabase.instance
         .reference()
@@ -40,7 +49,7 @@ class _ProfileState extends State<Profile> {
         .child(widget._currentUser.id)
         .onChildAdded
         .listen(onUserAdded);
-    _quotes = new List<Quot>();
+//    _quotes = new List<Quot>();
   }
 
   @override
@@ -51,13 +60,12 @@ class _ProfileState extends State<Profile> {
     _onUserAddedSubscribtion.cancel();
   }
 
-  void showBottomSheet() {
+  void showBottomSheet(int length) {
     double scheight = MediaQuery.of(context).size.height;
     double scwidth = MediaQuery.of(context).size.width;
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
-          var listCount;
           return Column(
             children: [
               Padding(
@@ -78,25 +86,34 @@ class _ProfileState extends State<Profile> {
                   child: ListView.separated(
                       itemBuilder: (context, index) {
                         if (BottomSheetState == "Followers") {
-                          setState(() {
-                            listCount = _followers.length;
-                          });
-                          return Followers_Followings(_followers.values.elementAt(index));
+                          if(length == 0)
+                            return Text("you have no followers yet!");
+                          return Followers_Followings(
+                              _followers.values.elementAt(index),
+                              _followers.keys.elementAt(index));
                         } else if (BottomSheetState == "Followings") {
-                          setState(() {
-                            listCount = _following.length;
-                          });
-                          return Followers_Followings(_following.values.elementAt(index));
+                          if(length == 0)
+                            return Text("you have not followed any one!");
+                          return Followers_Followings(
+                              _following.values.elementAt(index),
+                              _following.keys.elementAt(index));
                         } else {
-                          listCount = _stars.length;
+                          String staredQuote = _stars.keys.elementAt(index);
+//                          print(_likes.keys.contains(staredQuote));
+//                          print(_deslikes.keys.contains(staredQuote));
+                          if(length == 0)
+                            return Text("you have no stared Quotes!");
+
                           return StaredMsgs(
-                              "Medo Gad", "this is a test quote", true);
+                               _staredQuotes[index],
+                              _likes == null? false : _likes.keys.contains(staredQuote),
+                              _deslikes == null? false : _deslikes.keys.contains(staredQuote));
                         }
                       },
                       separatorBuilder: (context, index) => SizedBox(
                             height: scheight / 40,
                           ),
-                      itemCount: listCount),
+                      itemCount: length == 0? 1: length),
                 ),
               ),
             ],
@@ -180,7 +197,9 @@ class _ProfileState extends State<Profile> {
                 GestureDetector(
                     onTap: () {
                       BottomSheetState = "Followers";
-                      showBottomSheet();
+                      _followers != null?
+                        showBottomSheet(_followers.length):
+                        showBottomSheet(0);
                     },
                     child: Text(
                       "Followers",
@@ -191,7 +210,9 @@ class _ProfileState extends State<Profile> {
                 GestureDetector(
                     onTap: () {
                       BottomSheetState = "Followings";
-                      showBottomSheet();
+                      _following != null?
+                      showBottomSheet(_following.length):
+                      showBottomSheet(0);
                     },
                     child: Text(
                       "Followings",
@@ -202,7 +223,9 @@ class _ProfileState extends State<Profile> {
                 GestureDetector(
                     onTap: () {
                       BottomSheetState = "Stared";
-                      showBottomSheet();
+                      _stars != null?
+                        showBottomSheet(_stars.length):
+                        showBottomSheet(0);
                     },
                     child: Text(
                       "Stared Messages",
@@ -270,7 +293,7 @@ class _ProfileState extends State<Profile> {
 
   void onQuoteAdded(Event event) {
     setState(() {
-      _quotes.add(new Quot.fromSnapShot(event.snapshot));
+//      _quotes.add(new Quot.fromSnapShot(event.snapshot));
     });
   }
 
@@ -281,23 +304,25 @@ class _ProfileState extends State<Profile> {
         try {
           if (event.snapshot.key == "followers") {
             _followers = event.snapshot.value;
-//            followers.forEach((key, value) {
-//              print("----------------> $value");
-//            });
-//            print("========================> ${followers.keys}");
-//            print("-------------------------> ${(event.snapshot.value).keys}");
           }
           if (event.snapshot.key == "following") {
             _following = event.snapshot.value;
-//            following.forEach((key, value) {
-//              print("----------------> $value");
-//            });
-//            print("========================> ${_following}");
-            //            print("-------------------------> ${(event.snapshot.value).keys}");
-
+          }
+          if (event.snapshot.key == "likedQuotes") {
+            _likes = event.snapshot.value;
+          }
+          if (event.snapshot.key == "deslikedQuotes") {
+            _deslikes = event.snapshot.value;
           }
           if (event.snapshot.key == "staredQuotes") {
             _stars = event.snapshot.value;
+            for(int i = 0;i<_stars.length;i++){
+              for(int j=0 ; j<_quotes.length;j++){
+                if(_stars.keys.elementAt(i) == _quotes[j].quotID){
+                  _staredQuotes.add(_quotes[j]);
+                }
+              }
+            }
           }
         } catch (e) {
           print(e.toString());
@@ -306,67 +331,3 @@ class _ProfileState extends State<Profile> {
     });
   }
 }
-
-//
-//class Quote extends StatelessWidget {
-//  final String username;
-//  final String title;
-//  final String quote;
-//  DataBaseMethods _dataBaseMethods = new DataBaseMethods();
-//
-//  Quote(this.username, this.title, this.quote);
-//  @override
-//  Widget build(BuildContext context) {
-//    double scwidth = MediaQuery.of(context).size.width;
-//    double scheight = MediaQuery.of(context).size.height;
-//    return Container(
-//      width: scwidth * 0.8,
-//      decoration: BoxDecoration(
-//          borderRadius: BorderRadius.circular(30),
-//          border:
-//          Border.all(color: Color.fromRGBO(251, 212, 237, 1), width: 1)),
-//      child: Column(
-//        children: [
-//          Padding(
-//
-//            padding: EdgeInsets.only(left: scwidth * 0.17, top: 20 ),
-//            child: Row(
-//              children: [
-//                Text(
-//                  username,
-//                  style: TextStyle(color: Colors.white, fontSize: username.length>6?18:24),
-//                ),
-//                SizedBox(
-//                  width: scwidth * 0.1,
-//                ),
-//                RaisedButton(
-//                    onPressed: () async {
-//                      List<Quot> quotes = await _dataBaseMethods.getQuotes();
-//                      print(quotes[0].title);
-//                    },
-//                    child: Text('Follow'),
-//                    shape: RoundedRectangleBorder(
-//                        borderRadius: BorderRadius.circular(40))),
-//              ],
-//            ),
-//          ),
-//          Text(
-//            '___________________________',
-//            style: TextStyle(
-//                color: Color.fromRGBO(251, 212, 237, 1), fontSize: 20),
-//          ),
-//          Text(
-//            title,
-//            style: TextStyle(color: Colors.white, fontSize: 22),
-//          ),
-//          Text(
-//            quote,
-//            style: TextStyle(color: Colors.white70, fontSize: 18),
-//          ),
-//          SizedBox(height:scheight/40),
-//          IconButton(padding: EdgeInsets.only(left: scwidth/1.5),icon:Icon(Icons.favorite,color: Colors.red,size:35 ,),)
-//        ],
-//      ),
-//    );
-//  }
-//}

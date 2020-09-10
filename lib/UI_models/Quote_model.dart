@@ -84,18 +84,7 @@ class _QuoteState extends State<Quote> {
                 SizedBox(
                   width: scwidth * 0.1,
                 ),
-                RaisedButton(
-                    onPressed: () async {
-                      _dataBaseMethods.followUser(
-                          widget._currentQuote.authorID, widget._currentQuote.authorName,Followed);
-                      setState(() {
-                        Followed = !Followed;
-                      });
-                    },
-                    child: Text(Followed? "Followed":"Follow"),
-                    color: !Followed ? Colors.white : Colors.green,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40))),
+                followButton()
               ],
             ),
           ),
@@ -209,5 +198,24 @@ class _QuoteState extends State<Quote> {
     });
 
 
+  }
+
+  followButton() {
+   if(widget._currentQuote.authorID != widget._currentUser.id)
+    return RaisedButton(
+        onPressed: () async {
+          _dataBaseMethods.followUser(
+              widget._currentQuote.authorID, widget._currentQuote.authorName,Followed);
+          setState(() {
+            Followed = !Followed;
+          });
+        },
+        child: Text(Followed? "Followed":"Follow"),
+        color: !Followed ? Colors.white : Colors.green,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(40))
+    );
+   else
+     return Container();
   }
 }

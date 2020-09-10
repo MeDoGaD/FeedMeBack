@@ -91,7 +91,7 @@ class _AllQuotesState extends State<AllQuotes> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      new Profile()));
+                                      new Profile(_quotes)));
                         },
                         child: Text(
                           widget.currentUser == null ? "" : widget.currentUser.username,

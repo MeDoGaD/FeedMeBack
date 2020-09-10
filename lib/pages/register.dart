@@ -50,8 +50,8 @@ class _SignupState extends State<Register> {
           dataBaseMethods.uploadUserInfo(newUser);
           DataBaseMethods.currentUser = newUser;
           //TODO register successfully
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>AllQuotes()));
-
+//          Navigator.push(context, MaterialPageRoute(builder: (context)=>AllQuotes()));
+          widget.toggle();
         }
         else
         {
