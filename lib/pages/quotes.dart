@@ -45,18 +45,18 @@ class _AllQuotesState extends State<AllQuotes> {
     _onQuoteAddedSubscribtion.cancel();
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     double scwidth = MediaQuery.of(context).size.width;
     double scheight = MediaQuery.of(context).size.height;
     return (Scaffold(
-
-      body: Container(decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.blue[900],
-         Colors.blue[700],Colors.blue[900],
-      ])),
+      body: Container(
+        decoration: BoxDecoration(
+            gradient: LinearGradient(colors: [
+          Colors.blue[900],
+          Colors.blue[700],
+          Colors.blue[900],
+        ])),
         child: Padding(
             padding: EdgeInsets.only(top: scheight * 1 / 15),
             child: Column(
@@ -98,10 +98,12 @@ class _AllQuotesState extends State<AllQuotes> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        new Profile()));
+                                        new Profile(_quotes)));
                           },
                           child: Text(
-                            widget.currentUser == null ? "" : widget.currentUser.username,
+                            widget.currentUser == null
+                                ? ""
+                                : widget.currentUser.username,
                             style: TextStyle(color: Colors.white70),
                           )),
                       SizedBox(width: scwidth * 1 / 17),
@@ -139,7 +141,8 @@ class _AllQuotesState extends State<AllQuotes> {
                       child: Center(
                         child: Text(
                           'Type a Quote here ... ',
-                          style: TextStyle(fontSize: 22, color: Colors.grey[500]),
+                          style:
+                              TextStyle(fontSize: 22, color: Colors.grey[500]),
                         ),
                       ),
                     ),
@@ -150,7 +153,7 @@ class _AllQuotesState extends State<AllQuotes> {
                     reverse: true,
                     itemCount: _quotes.length,
                     itemBuilder: (context, index) {
-                      return Quote(widget.currentUser,_quotes[index]);
+                      return Quote(widget.currentUser, _quotes[index]);
                     },
                     separatorBuilder: (context, index) => SizedBox(
                       height: scheight * 1 / 100,

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:feedme/UI_models/Followers&Followings&Stared.dart';
 import 'package:feedme/model/quot_model.dart';
 import 'package:feedme/model/user_model.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -147,4 +148,5 @@ class DataBaseMethods {
       _userReference.child(currentUser.id).child('staredQuotes').child(quote.quotID).set(quote.title):
       _userReference.child(currentUser.id).child('staredQuotes').child(quote.quotID).remove();
   }
+
 }
