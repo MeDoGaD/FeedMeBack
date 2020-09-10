@@ -130,9 +130,10 @@ class _ProfileState extends State<Profile> {
       body: Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
-          Color.fromRGBO(30, 73, 117, 80),
-          Colors.deepPurple[700]
-        ])),
+              Colors.blue[900],
+              Colors.blue[700],
+              Colors.blue[900],
+            ])),
         child: Padding(
           padding: EdgeInsets.only(top: scheight * 1 / 15),
           child: Column(children: [
