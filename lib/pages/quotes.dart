@@ -28,13 +28,11 @@ class _AllQuotesState extends State<AllQuotes> {
   void initState() {
     // TODO: implement initState
     super.initState();
-//    _dataBaseMethods.getQuotes();
     _onQuoteAddedSubscribtion = FirebaseDatabase.instance
         .reference()
         .child('quot')
         .onChildAdded
         .listen(onQuoteAdded);
-//    _onUserAddedSubscribtion = FirebaseDatabase.instance.reference().child('user').onChildAdded.listen(onUserAdded);
     _quotes = new List<Quot>();
   }
 

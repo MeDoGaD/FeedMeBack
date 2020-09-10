@@ -126,7 +126,6 @@ class _ProfileState extends State<Profile> {
     double scwidth = MediaQuery.of(context).size.width;
     double scheight = MediaQuery.of(context).size.height;
     return Scaffold(
-      //backgroundColor:Color.fromRGBO(30, 73, 117, 80),
       body: Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
@@ -268,7 +267,6 @@ class _ProfileState extends State<Profile> {
             ),
             Expanded(
               child: ListView.separated(
-                reverse: false,
                 itemCount: _quotes.length,
                 itemBuilder: (context, index) {
                   if (_quotes[index].authorName ==

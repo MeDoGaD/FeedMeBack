@@ -30,12 +30,7 @@ class DataBaseMethods {
   }
 
   getUserByUseremail(String useremail) {
-//    return await Firestore.instance
-//        .collection("Users")
-//        .where("email", isEqualTo: useremail)
-//        .getDocuments();
     _userReference.once().then((DataSnapshot snapshot) {
-//          return new User.map(snapShot.value);
       Map<dynamic, dynamic> values = snapshot.value;
       values.forEach((key, values) {
         if (values['email'] == useremail) {
@@ -43,12 +38,9 @@ class DataBaseMethods {
               password: values['password'],
               email: values['email'],
               username: values['username']);
-          // return user.username;
         }
       });
     });
-//      return _userReference.child(useremail);
-//      Map<dynamic, dynamic> map =
   }
 
   uploadUserInfo(User user) {

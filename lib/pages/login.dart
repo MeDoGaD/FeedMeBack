@@ -34,32 +34,23 @@ class _loginState extends State<Login>{
   @override
   void initState(){
     super.initState();
-//    _onUserAddedSubscribtion = FirebaseDatabase.instance.reference().child('user').onChildAdded.listen(onUserAdded);
-
-//    _currentUser = new User();
   }
   signIn()
   {
-
-//    print(DataBaseMethods.currentUser.username);
-//    dataBaseMethods.getUserByUseremail(_useremail.text).then((val){
-////      snapshotUserInfo=val;
-//
-//      HelperFunctions.saveUsername(snapshotUserInfo.documents[0].data["name"]);
-//    });
     setState(() {
       isloading=true;
     });
     _onUserAddedSubscribtion = FirebaseDatabase.instance.reference().child('user').onChildAdded.listen(onUserAdded);
-    HelperFunctions.saveUserEmail(_useremail.text);
-    HelperFunctions.saveUserLoggedIN(true);
-//    dataBaseMethods.getUserByUseremail(_useremail.text);
+
     if(_currentUser != null) {
-      HelperFunctions.saveUsername(_currentUser.username);
       authMethods.signInWithEmailAndPassword(_useremail.text, _password.text)
           .then((value) {
         if (value != null) {
           // TODO login success
+          HelperFunctions.saveUserEmail(_useremail.text);
+          HelperFunctions.saveUserLoggedIN(true);
+          HelperFunctions.saveUsername(_currentUser.username);
+
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => AllQuotes()));
         }

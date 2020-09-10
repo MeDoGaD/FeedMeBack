@@ -1,3 +1,6 @@
+import 'package:feedme/helper/helperfunctions.dart';
+import 'package:feedme/pages/quotes.dart';
+import 'package:feedme/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:feedme/helper/authentication.dart';
 
@@ -6,9 +9,23 @@ class Start_Page extends StatefulWidget {
 }
 
 class _Start_PageState extends State<Start_Page> {
+  bool isLoggedIn=false;
+
+  void initState() {
+    getLoggedInState();
+    super.initState();
+  }
+  getLoggedInState()async{
+    await HelperFunctions.getUserLoggedIN().then((value) {
+      setState(() {
+        isLoggedIn=value;
+      });
+    });
+  }
+  DataBaseMethods dataBaseMethods=new DataBaseMethods();
+  HelperFunctions helper=new HelperFunctions();
   @override
   Widget build(BuildContext context) {
-
     double scwidth=MediaQuery.of(context).size.width;
     double scheight=MediaQuery.of(context).size.height;
     return (Scaffold(
@@ -22,7 +39,15 @@ class _Start_PageState extends State<Start_Page> {
           Padding(
             padding:  EdgeInsets.only(top: scheight*0.29),
             child: Container(width: scwidth*1/2,height: scheight*1/17,child: RaisedButton(color: Colors.yellow[300],onPressed: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>Authenticate()));
+             // if(isLoggedIn==null){
+              Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>Authenticate()));//}
+             // else
+                //{
+                 // String email=HelperFunctions.getUserEmail().toString();
+                 // print(">>>>>>>>>>>>>>>>>>>>>>>>>");
+                  //dataBaseMethods.getUserByUseremail(email);
+                //  Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>AllQuotes()));
+               // }
             },child: Text('Start Now',style: TextStyle(color: Colors.black,fontSize: 20),),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),)),
           ),
         ],),),

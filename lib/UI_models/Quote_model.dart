@@ -101,127 +101,131 @@ class _QuoteState extends State<Quote> {
     double scwidth = MediaQuery.of(context).size.width;
     double scheight = MediaQuery.of(context).size.height;
 
-    return Padding(
-      padding:  EdgeInsets.all(scwidth*1/40),
-      child: Container(
-        width: scwidth * 0.8,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(30),bottomRight: Radius.circular(30),bottomLeft:Radius.circular(10) ,topRight:Radius.circular(10) ),
-            border:
-                Border.all(color: Color.fromRGBO(251, 212, 237, 1), width: 1)),
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: scwidth * 0.17, top: 10),
-              child: Row(
-                children: [
-                  Text(
-                    widget._currentQuote.authorName,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: widget._currentQuote.authorName.length > 6 ? 18 : 24),
-                  ),
-                  SizedBox(
-                    width: scwidth * 0.1,
-                  ),
-                  followButton()
-                ],
-              ),
-            ),
-            Text(
-              '___________________________',
-              style: TextStyle(
-                  color: Color.fromRGBO(251, 212, 237, 1), fontSize: 20),
-            ),
-            Padding(
-              padding:  EdgeInsets.only(left: 4,right: 4),
-              child: Text(
-                widget._currentQuote.title,
-                style: TextStyle(color: Colors.white, fontSize: 22),
-              ),
-            ),
-            Padding(
-              padding:  EdgeInsets.only(left:4 ,right: 4),
-              child: Text(
-                widget._currentQuote.text,
-                style: TextStyle(color: Colors.white70, fontSize: 18),
-              ),
-            ),
-            SizedBox(height: scheight / 40),
-            Row(children: [
-              SizedBox(width: scwidth*1/60,),
-              Text("150 ",style: TextStyle(color: Colors.red),),
-              IconButton(
-                onPressed: (){
-                  setState(() {
-                    liked = !liked;
-                    if(deslike){
-                      deslike = false;
-                      widget._currentQuote.numberOfDeslikes--;
-                      _dataBaseMethods.deslikeQuote(widget._currentQuote,deslike);
-                    }
-                    liked? widget._currentQuote.numberOfLikes++ : widget._currentQuote.numberOfLikes--;
-                    _dataBaseMethods.likeQuote(widget._currentQuote, liked);
-                  });
-                },
-                padding: EdgeInsets.only(left: scwidth / 100),
-                icon: Icon(
-                  liked? Icons.favorite : Icons.favorite_border,
-                  color: liked?  Colors.red : Color.fromRGBO(255, 150, 140, 0.7),
-                  size: 25,
+    return GestureDetector(onLongPress:(){
+      //TODO remove quote
+    } ,
+      child: Padding(
+        padding:  EdgeInsets.all(scwidth*1/40),
+        child: Container(
+          width: scwidth * 0.8,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(30),bottomRight: Radius.circular(30),bottomLeft:Radius.circular(10) ,topRight:Radius.circular(10) ),
+              border:
+                  Border.all(color: Color.fromRGBO(251, 212, 237, 1), width: 1)),
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left:widget._currentQuote.authorID != widget._currentUser.id? scwidth * 0.17:scwidth*0.1, top: 10),
+                child: Row(mainAxisAlignment: widget._currentQuote.authorID == widget._currentUser.id?MainAxisAlignment.center:MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget._currentQuote.authorName,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: widget._currentQuote.authorName.length > 6 ? 18 : 24),
+                    ),
+                    SizedBox(
+                      width: scwidth * 0.1,
+                    ),
+                    followButton()
+                  ],
                 ),
               ),
-              Text("100 ",style: TextStyle(color: Colors.white),),
-              IconButton(
-                onPressed: (){
-                  setState(() {
-                    deslike = !deslike;
-                    if(liked){
-                      liked = false;
-                      widget._currentQuote.numberOfLikes--;
+              Text(
+                '___________________________',
+                style: TextStyle(
+                    color: Color.fromRGBO(251, 212, 237, 1), fontSize: 20),
+              ),
+              Padding(
+                padding:  EdgeInsets.only(left: 4,right: 4),
+                child: Text(
+                  widget._currentQuote.title,
+                  style: TextStyle(color: Colors.white, fontSize: 22),
+                ),
+              ),
+              Padding(
+                padding:  EdgeInsets.only(left:4 ,right: 4),
+                child: Text(
+                  widget._currentQuote.text,
+                  style: TextStyle(color: Colors.white70, fontSize: 18),
+                ),
+              ),
+              SizedBox(height: scheight / 40),
+              Row(children: [
+                SizedBox(width: scwidth*1/60,),
+                Text("150 ",style: TextStyle(color: Colors.red),),
+                IconButton(
+                  onPressed: (){
+                    setState(() {
+                      liked = !liked;
+                      if(deslike){
+                        deslike = false;
+                        widget._currentQuote.numberOfDeslikes--;
+                        _dataBaseMethods.deslikeQuote(widget._currentQuote,deslike);
+                      }
+                      liked? widget._currentQuote.numberOfLikes++ : widget._currentQuote.numberOfLikes--;
                       _dataBaseMethods.likeQuote(widget._currentQuote, liked);
-                    }
-                    deslike?
-                      widget._currentQuote.numberOfDeslikes++: widget._currentQuote.numberOfDeslikes--;
-                    _dataBaseMethods.deslikeQuote(widget._currentQuote,deslike);
-                  });
-                },
-                icon: Icon(
-                  deslike?dislike.MyFlutterApp.thumbs_down_alt : dislike.MyFlutterApp.thumbs_down,
-                  color: deslike?  Colors.blue : Color.fromRGBO(255, 150, 140, 0.7),
-                  size: 25,
+                    });
+                  },
+                  padding: EdgeInsets.only(left: scwidth / 100),
+                  icon: Icon(
+                    liked? Icons.favorite : Icons.favorite_border,
+                    color: liked?  Colors.red : Color.fromRGBO(255, 150, 140, 0.7),
+                    size: 25,
+                  ),
                 ),
-              ),
-
-              IconButton(
-                onPressed: (){
-                //TODO commenting
-                  showBottomSheet();
-                },
-                padding: EdgeInsets.only(left: scwidth /5, right: scwidth/25),
-                icon: Icon(
-                   Icons.comment ,
-                  color: Color.fromRGBO(255, 150, 140, 0.7),
-                  size: 25,
+                Text("100 ",style: TextStyle(color: Colors.white),),
+                IconButton(
+                  onPressed: (){
+                    setState(() {
+                      deslike = !deslike;
+                      if(liked){
+                        liked = false;
+                        widget._currentQuote.numberOfLikes--;
+                        _dataBaseMethods.likeQuote(widget._currentQuote, liked);
+                      }
+                      deslike?
+                        widget._currentQuote.numberOfDeslikes++: widget._currentQuote.numberOfDeslikes--;
+                      _dataBaseMethods.deslikeQuote(widget._currentQuote,deslike);
+                    });
+                  },
+                  icon: Icon(
+                    deslike?dislike.MyFlutterApp.thumbs_down_alt : dislike.MyFlutterApp.thumbs_down,
+                    color: deslike?  Colors.blue : Color.fromRGBO(255, 150, 140, 0.7),
+                    size: 25,
+                  ),
                 ),
-              ),
 
-              IconButton(
-                onPressed: (){
-                  setState(() {
-                    stared = !stared;
-                    _dataBaseMethods.starQuote(widget._currentQuote,stared);
-                  });
-                },
-                icon: Icon(
-                  stared? Icons.star : Icons.star_border,
-                  color: stared?  Colors.yellow : Color.fromRGBO(255, 150, 140, 0.7),
-                  size: 25,
+                IconButton(
+                  onPressed: (){
+                  //TODO commenting
+                    showBottomSheet();
+                  },
+                  padding: EdgeInsets.only(left: scwidth /5, right: scwidth/25),
+                  icon: Icon(
+                     Icons.comment ,
+                    color: Color.fromRGBO(255, 150, 140, 0.7),
+                    size: 25,
+                  ),
                 ),
-              ),
-            ],),
 
-          ],
+                IconButton(
+                  onPressed: (){
+                    setState(() {
+                      stared = !stared;
+                      _dataBaseMethods.starQuote(widget._currentQuote,stared);
+                    });
+                  },
+                  icon: Icon(
+                    stared? Icons.star : Icons.star_border,
+                    color: stared?  Colors.yellow : Color.fromRGBO(255, 150, 140, 0.7),
+                    size: 25,
+                  ),
+                ),
+              ],),
+
+            ],
+          ),
         ),
       ),
     );
