@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:feedme/UI_models/Comment_model.dart';
+import 'package:feedme/UI_models/CommentUi_model.dart';
 import 'package:feedme/model/quot_model.dart';
 import 'package:feedme/model/user_model.dart';
 import 'package:feedme/pages/profile.dart';

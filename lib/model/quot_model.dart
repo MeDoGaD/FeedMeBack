@@ -8,9 +8,9 @@ class Quot{
   String authorID;
   int numberOfLikes;
   int numberOfDeslikes;
-  List<String> comments;
+  int numberOfComments;
 
-  Quot({this.title,this.text,this.authorName,this.authorID,this.numberOfLikes,this.numberOfDeslikes,this.comments});
+  Quot({this.title,this.text,this.authorName,this.authorID,this.numberOfLikes,this.numberOfDeslikes,this.numberOfComments});
 
   Quot.map(dynamic obj){
     this.title = obj["title"];
@@ -19,7 +19,7 @@ class Quot{
     this.authorID = obj["authorID"];
     this.numberOfLikes = obj["likes"];
     this.numberOfDeslikes = obj["deslikes"];
-    this.comments = obj["comments"];
+    this.numberOfComments = obj["comments"];
   }
   String get _title => title;
   String get _text => text;
@@ -27,7 +27,7 @@ class Quot{
   String get _authorID => authorID;
   int get _likes => numberOfLikes;
   int get _deslikes => numberOfDeslikes;
-  List<String> get _comments => comments;
+  int get _comments => numberOfComments;
 
   Quot.fromSnapShot(DataSnapshot snapshot){
     quotID = snapshot.key;
@@ -37,6 +37,6 @@ class Quot{
     authorID = snapshot.value["authorID"];
     numberOfLikes = snapshot.value["likes"];
     numberOfDeslikes = snapshot.value["deslikes"];
-    comments = snapshot.value["comments"];
+    numberOfComments = snapshot.value["numberOfComments"];
   }
 }

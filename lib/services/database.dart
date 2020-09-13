@@ -55,7 +55,7 @@ class DataBaseMethods {
 //  User
   followUser(String id, String username, bool followed) {
     try {
-      if (!followed) {
+      if (followed) {
         _userReference
             .child(id)
             .child('followers')
@@ -66,10 +66,17 @@ class DataBaseMethods {
             .child('following')
             .child(id)
             .set(username);
-      }
-      else{
-        _userReference.child(id).child('followers').child(currentUser.id).remove();
-        _userReference.child(currentUser.id).child('following').child(id).remove();
+      } else {
+        _userReference
+            .child(id)
+            .child('followers')
+            .child(currentUser.id)
+            .remove();
+        _userReference
+            .child(currentUser.id)
+            .child('following')
+            .child(id)
+            .remove();
       }
     } catch (e) {
       print("ERROR->${e.toString()}");
@@ -86,7 +93,7 @@ class DataBaseMethods {
       'authorID': quot.authorID,
       'likes': quot.numberOfLikes,
       'deslikes': quot.numberOfDeslikes,
-      'comments': quot.comments
+      'numberOfComments': quot.numberOfComments
     });
   }
 
@@ -116,29 +123,67 @@ class DataBaseMethods {
       'authorID': quot.authorID,
       'likes': quot.numberOfLikes,
       'deslikes': quot.numberOfDeslikes,
-      'comments': quot.comments
+      'numberOfComments': quot.numberOfComments
     });
   }
 
   void likeQuote(Quot quote, bool liked) {
     _quotReference.child(quote.quotID).child('likes').set(quote.numberOfLikes);
-    liked?
-      _userReference.child(currentUser.id).child('likedQuotes').child(quote.quotID).set(quote.title):
-      _userReference.child(currentUser.id).child('likedQuotes').child(quote.quotID).remove();
+    liked
+        ? _userReference
+            .child(currentUser.id)
+            .child('likedQuotes')
+            .child(quote.quotID)
+            .set(quote.title)
+        : _userReference
+            .child(currentUser.id)
+            .child('likedQuotes')
+            .child(quote.quotID)
+            .remove();
   }
 
   void deslikeQuote(Quot quote, bool deslike) {
-    _quotReference.child(quote.quotID).child('deslikes').set(quote.numberOfDeslikes);
-    deslike?
-        _userReference.child(currentUser.id).child('deslikedQuotes').child(quote.quotID).set(quote.title):
-        _userReference.child(currentUser.id).child('deslikedQuotes').child(quote.quotID).remove();
-
+    _quotReference
+        .child(quote.quotID)
+        .child('deslikes')
+        .set(quote.numberOfDeslikes);
+    deslike
+        ? _userReference
+            .child(currentUser.id)
+            .child('deslikedQuotes')
+            .child(quote.quotID)
+            .set(quote.title)
+        : _userReference
+            .child(currentUser.id)
+            .child('deslikedQuotes')
+            .child(quote.quotID)
+            .remove();
   }
 
   void starQuote(Quot quote, bool stared) {
-    stared?
-      _userReference.child(currentUser.id).child('staredQuotes').child(quote.quotID).set(quote.title):
-      _userReference.child(currentUser.id).child('staredQuotes').child(quote.quotID).remove();
+    stared
+        ? _userReference
+            .child(currentUser.id)
+            .child('staredQuotes')
+            .child(quote.quotID)
+            .set(quote.title)
+        : _userReference
+            .child(currentUser.id)
+            .child('staredQuotes')
+            .child(quote.quotID)
+            .remove();
   }
 
+  void addComment(String commentText, Quot quot) {
+    _quotReference
+        .child(quot.quotID)
+        .child('numberOfComments')
+        .set(quot.numberOfComments+1);
+    _quotReference.child(quot.quotID).child('textsOfComments').push().set({
+      'authorID': currentUser.id,
+      'username': currentUser.username,
+      'commentText': commentText,
+      'date': DateTime.now().toString()
+    });
+  }
 }
