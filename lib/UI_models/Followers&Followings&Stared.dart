@@ -4,10 +4,18 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:feedme/NewIcons/my_flutter_app_icons.dart' as dislike;
 
-class Followers_Followings extends StatelessWidget {
+class Followers_Followings extends StatefulWidget{
   final String username, id;
-  bool followed = true;
-  Followers_Followings(this.username, this.id);
+  bool followed;
+  int _followerOrfollowing;
+  Followers_Followings( this._followerOrfollowing, this.followed, this.username, this.id);
+  @override
+  State<StatefulWidget> createState() {
+    return new _Followers_FollowingsState();
+  }
+}
+
+class _Followers_FollowingsState extends State<Followers_Followings>{
   @override
   Widget build(BuildContext context) {
     double scwidth = MediaQuery.of(context).size.width;
@@ -29,7 +37,7 @@ class Followers_Followings extends StatelessWidget {
             width: scwidth * 1 / 15,
           ),
           Text(
-            username,
+            widget.username,
             style: TextStyle(color: Colors.black, fontSize: 25),
           ),
           SizedBox(
@@ -38,12 +46,15 @@ class Followers_Followings extends StatelessWidget {
           RaisedButton(
             color: Colors.blue,
             onPressed: () {
-              _databaseMethods.followUser(id, username, true);
+              setState(() {
+                widget.followed=!widget.followed;
+              });
+              _databaseMethods.followUser(widget.id, widget.username, widget.followed);
             },
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
             child: Text(
-              followed? "UnFollow":"Follow",
+              widget.followed? "UnFollow":"Follow",
               style: TextStyle(color: Colors.white),
             ),
           )
@@ -51,6 +62,8 @@ class Followers_Followings extends StatelessWidget {
       ),
     );
   }
+
+
 }
 
 class StaredMsgs extends StatefulWidget {

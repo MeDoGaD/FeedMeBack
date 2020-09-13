@@ -259,7 +259,7 @@ class _InsertQuoteState extends State<InsertQuote> {
         authorID: widget._currentUser.id,
         numberOfLikes: 0,
         numberOfDeslikes: 0,
-        comments: new List<String>());
+        numberOfComments: 0);
     _dataBaseMethods.addQuote(quot);
 //    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Profile(_currentUser)));
   Navigator.pop(context);
