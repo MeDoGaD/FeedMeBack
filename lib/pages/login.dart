@@ -50,7 +50,6 @@ class _loginState extends State<Login>{
           HelperFunctions.saveUserEmail(_useremail.text);
           HelperFunctions.saveUserLoggedIN(true);
           HelperFunctions.saveUsername(_currentUser.username);
-
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => AllQuotes()));
         }

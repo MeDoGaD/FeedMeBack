@@ -300,27 +300,24 @@ class _ProfileState extends State<Profile> {
               ),
             ),
             Expanded(
-              child: Scrollbar(
                 child: ListView.separated(
-                  reverse: true,
-                  controller: _scrollController,
                   itemCount: _quotes.length,
                   itemBuilder: (context, index) {
-                    if (_quotes[index].authorName ==
+                    if (_quotes[(_quotes.length-1)-index].authorName ==
                         widget._currentUser.username) {
-                      return Quote(widget._currentUser, _quotes[index]);
+                      return Quote(widget._currentUser, _quotes[(_quotes.length-1)-index]);
                     } else {
                       return Container();
                     }
                   },
                   separatorBuilder: (context, index) => SizedBox(
-                    height: _quotes[index].authorName ==
+                    height: _quotes[(_quotes.length-1)-index].authorName ==
                             widget._currentUser.username
-                        ? scheight * 1 / 30
+                        ? scheight * 1 / 70
                         : 0,
                   ),
                 ),
-              ),
+
             ),
           ]),
         ),

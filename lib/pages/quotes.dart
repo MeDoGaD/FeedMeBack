@@ -13,7 +13,7 @@ import 'package:feedme/UI_models/Quote_model.dart';
 
 class AllQuotes extends StatefulWidget {
   User currentUser = DataBaseMethods.currentUser;
-//  const AllQuotes(this.currentUser);
+  // AllQuotes(this.currentUser);
   _AllQuotesState createState() => _AllQuotesState();
 }
 
@@ -148,10 +148,9 @@ class _AllQuotesState extends State<AllQuotes> {
                 ),
                 Expanded(
                   child: ListView.separated(
-                    reverse: true,
                     itemCount: _quotes.length,
                     itemBuilder: (context, index) {
-                      return Quote(widget.currentUser, _quotes[index]);
+                      return Quote(DataBaseMethods.currentUser, _quotes[(_quotes.length-1)-index]);
                     },
                     separatorBuilder: (context, index) => SizedBox(
                       height: scheight * 1 / 100,
