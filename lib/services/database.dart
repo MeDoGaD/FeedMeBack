@@ -3,6 +3,7 @@ import 'package:feedme/UI_models/Followers&Followings&Stared.dart';
 import 'package:feedme/model/quot_model.dart';
 import 'package:feedme/model/user_model.dart';
 import 'package:firebase_database/firebase_database.dart';
+//import 'package:intl/intl.dart';
 
 class DataBaseMethods {
   final _userReference = FirebaseDatabase.instance.reference().child('user');
@@ -97,23 +98,16 @@ class DataBaseMethods {
     });
   }
 
-//  List<Quot> getQuotes() {
-//    _quotReference.once().then((DataSnapshot snapshot) {
-//      Map<dynamic, dynamic> values = snapshot.value;
-//      List<Quot> quotes = new List<Quot>();
-//      values.forEach((key, value) {
-//        quotes.add(new Quot(
-//            title: value['title'],
-//            text: value['text'],
-//            authorName: value['author'],
-//            authorID: value['authorID'],
-//            numberOfLikes: value['likes'],
-//            numberOfDeslikes: value['deslikes'],
-//            comments: value['comments']));
-//      });
-//      return quotes;
-//    });
-//  }
+  Future<User> getUser(String username)async {
+    _userReference.once().then((DataSnapshot snapshot) {
+      Map<dynamic, dynamic> data = snapshot.value;
+      data.forEach((key, value) {
+        if(value['username'] == username)
+          return Future(()=> User(username: username, email: value['email'],id: key));
+//        print(value['username']);
+      });
+    });
+  }
 
   updateQuote(Quot quot) {
     _quotReference.child(quot.quotID).set({
@@ -175,15 +169,20 @@ class DataBaseMethods {
   }
 
   void addComment(String commentText, Quot quot) {
-    _quotReference
+    String key = (DateTime.now().year.toString() +
+            DateTime.now().month.toString() +
+            DateTime.now().day.toString() +
+            DateTime.now().minute.toString() +
+            DateTime.now().second.toString());
+        _quotReference
         .child(quot.quotID)
         .child('numberOfComments')
-        .set(quot.numberOfComments+1);
-    _quotReference.child(quot.quotID).child('textsOfComments').push().set({
+        .set(quot.numberOfComments);
+    _quotReference.child(quot.quotID).child('textsOfComments').child(key).set({
       'authorID': currentUser.id,
       'username': currentUser.username,
       'commentText': commentText,
-      'date': DateTime.now().toString()
+      'date': key
     });
   }
 }

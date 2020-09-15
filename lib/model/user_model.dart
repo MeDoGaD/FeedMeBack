@@ -5,7 +5,7 @@ class User{
   String username;
   String email;
   String password;
-  User({this.username, this.email, this.password});
+  User({this.username, this.email, this.password, this.id});
 
   User.map(dynamic obj){
     this.username = obj["username"];
