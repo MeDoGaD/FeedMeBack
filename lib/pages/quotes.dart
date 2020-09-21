@@ -3,6 +3,7 @@ import 'package:feedme/UI_models/CommentUi_model.dart';
 import 'package:feedme/model/quot_model.dart';
 import 'package:feedme/model/user_model.dart';
 import 'package:feedme/pages/profile.dart';
+import 'package:feedme/pages/search.dart';
 import 'package:feedme/services/database.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -76,7 +77,10 @@ class _AllQuotesState extends State<AllQuotes> {
                       SizedBox(width: scwidth * 1 / 15),
                       Container(
                           width: scwidth * 1 / 4,
-                          child: TextField(
+                          child: TextField(onTap: (){ Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => new Search()));},
                             controller: _searchController,
                             decoration: InputDecoration(
                               hintText: 'Search',
@@ -90,9 +94,13 @@ class _AllQuotesState extends State<AllQuotes> {
                           color: Colors.white70,
                         ),
                         onPressed: ()async {
-                            User u = await _dataBaseMethods.getUser(_searchController.text);
-                            if(u != null)
-                              print(u.email);
+                           // User u = await _dataBaseMethods.getUser(_searchController.text);
+                            //if(u != null)
+                             // print(u.email);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => new Search()));
                         },
                       ),
                       SizedBox(width: scwidth * 1 / 20),

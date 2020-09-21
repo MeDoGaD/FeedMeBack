@@ -39,14 +39,16 @@ class _Start_PageState extends State<Start_Page> {
           Padding(
             padding:  EdgeInsets.only(top: scheight*0.29),
             child: Container(width: scwidth*1/2,height: scheight*1/17,child: RaisedButton(color: Colors.yellow[300],onPressed: ()async{
-              //if(isLoggedIn==null){
+             // if(isLoggedIn==null){
               Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>Authenticate()));//}
              // else
                // {
-                 //String email=HelperFunctions.getUserEmail().toString();
-                  //await dataBaseMethods.getUserByUseremail(email);
-                  //Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>AllQuotes()));
-                //}
+                // String email=HelperFunctions.getUserEmail().toString();
+                // await dataBaseMethods.getUserByUseremail(email);
+                // print("***************");
+                // print(DataBaseMethods.currentUser.username);
+                // Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>AllQuotes()));
+               // }
             },child: Text('Start Now',style: TextStyle(color: Colors.black,fontSize: 20),),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),)),
           ),
         ],),),
