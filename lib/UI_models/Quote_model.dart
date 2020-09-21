@@ -33,6 +33,7 @@ class _QuoteState extends State<Quote> {
   bool stared;
   Map<dynamic, dynamic> following, likes, deslikes, stares;
   List<Comment> _comments = new List();
+//  List<CommentUi> _comments = new List();
   @override
   void initState() {
     // TODO: implement initState
@@ -45,8 +46,8 @@ class _QuoteState extends State<Quote> {
         .reference()
         .child('quot')
         .child(widget._currentQuote.quotID)
-        .orderByChild('date')
-        .onChildAdded
+//        .child('numberOfComments')
+        .onValue
         .listen(onCommentAdded);
     _onUserAddedSubscribtion = FirebaseDatabase.instance
         .reference()
@@ -54,6 +55,8 @@ class _QuoteState extends State<Quote> {
         .child(widget._currentUser.id)
         .onChildAdded
         .listen(onUserAdded);
+
+    getComments();
   }
 
   @override
@@ -68,7 +71,7 @@ class _QuoteState extends State<Quote> {
     double scheight = MediaQuery.of(context).size.height;
     double scwidth = MediaQuery.of(context).size.width;
     TextEditingController _commentTextController = new TextEditingController();
-
+    _comments.sort((a, b) => a.commentID.compareTo(b.commentID));
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
@@ -90,9 +93,9 @@ class _QuoteState extends State<Quote> {
                   child: ListView.separated(
 //                    reverse: true,
                       itemBuilder: (context, index) {
-                        print(_comments[index].text);
-                        return CommentUi(_comments[index]);
-//                          return Text(_comments[index].text);
+                        return CommentUi(
+                            _comments[(_comments.length - 1) - index]);
+//                        return _comments[index];
                       },
                       separatorBuilder: (context, index) => SizedBox(
                             height: scheight * 1 / 50,
@@ -123,10 +126,10 @@ class _QuoteState extends State<Quote> {
                       ),
                       onPressed: () {
                         setState(() {
+                          widget._currentQuote.numberOfComments++;
                           _dataBaseMethods.addComment(
                               _commentTextController.text,
                               widget._currentQuote);
-//                          _comments.add(new Comment(widget._currentUser.id, widget._currentUser.username, _commentTextController.text));
                           _commentTextController.clear();
                         });
                       },
@@ -370,24 +373,58 @@ class _QuoteState extends State<Quote> {
     });
   }
 
+  void getComments() {
+    FirebaseDatabase.instance
+        .reference()
+        .child('quot')
+        .child(widget._currentQuote.quotID)
+        .child('textsOfComments')
+        .orderByKey()
+        .once()
+        .then((DataSnapshot snapshot) {
+      Map<dynamic, dynamic> tmp2 = snapshot.value;
+      tmp2.forEach((key, value) {
+        _comments.add(new Comment(
+            value['authorID'], value['username'], value['commentText'],
+            commentID: key, date: value['date']));
+//        print("------------------> ${value['commentText']}");
+      });
+    }).catchError((e) {});
+  }
+
+//  void onCommentAdded(Event event) {
+//    setState(() {
+////      if (event.snapshot.key == "numberOfComments") {
+////        widget._currentQuote.numberOfComments = event.snapshot.value;
+////      }
+////      if (event.snapshot.key == "textsOfComments") {
+////        Map<dynamic, dynamic> tmp = event.snapshot.value;
+////        Map<dynamic, dynamic> tmp2;
+////        tmp.forEach((key, value) {
+////          tmp2 = event.snapshot.value[key];
+////
+////          _comments.add(new Comment(tmp2.values.elementAt(2),
+////              tmp2.values.elementAt(0), tmp2.values.elementAt(3),
+////              commentID: key, date: tmp2.values.elementAt(1)));
+////          print("-------------> ${event.snapshot.value}");
+////        });
+////      }
+//    });
+//  }
+
+  void onCommentChanged(Event event) {
+    print(event.snapshot.value);
+  }
+
   void onCommentAdded(Event event) {
     setState(() {
-      if (event.snapshot.key == "numberOfComments") {
-        widget._currentQuote.numberOfComments = event.snapshot.value;
-      }
-      if (event.snapshot.key == "textsOfComments") {
-//        _comments = event.snapshot.value;
-//        widget._currentQuote.numberOfComments = _comments.length;
-        Map<dynamic, dynamic> tmp = event.snapshot.value;
-        Map<dynamic, dynamic> tmp2;
-        tmp.forEach((key, value) {
-          tmp2 = event.snapshot.value[key];
-          _comments.add(new Comment(tmp2.values.elementAt(2),
-              tmp2.values.elementAt(0), tmp2.values.elementAt(3),
-              commentID: key,date: tmp2.values.elementAt(1)));
-          print(tmp2.values);
-        });
-      }
+      print(event.snapshot.value['numberOfComments']);
+//      if(event.snapshot.key == 'numberOfComments')
+        widget._currentQuote.numberOfComments = event.snapshot.value['numberOfComments'];
+//      if(event.snapshot.key == 'likes')
+        widget._currentQuote.numberOfLikes = event.snapshot.value['likes'];
+//      if(event.snapshot.key == 'deslikes')
+        widget._currentQuote.numberOfDeslikes = event.snapshot.value['deslikes'];
     });
   }
 }

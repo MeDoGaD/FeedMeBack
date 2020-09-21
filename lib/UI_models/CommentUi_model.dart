@@ -22,7 +22,7 @@ class _CommentUiState extends State<CommentUi> {
       child:Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(children: [
-          Text(widget._currentComment.authorID,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 18)),
+          Text(widget._currentComment.authorName,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 18)),
           Text(widget._currentComment.text,style: TextStyle(color: Colors.white,fontSize: 16),)
         ],),
       ) ,);

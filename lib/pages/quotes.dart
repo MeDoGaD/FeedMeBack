@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:feedme/helper/authentication.dart';
 import 'package:feedme/pages/InsertQuote.dart';
 import 'package:feedme/UI_models/Quote_model.dart';
+import 'dart:async';
 
 class AllQuotes extends StatefulWidget {
   User currentUser = DataBaseMethods.currentUser;
@@ -21,7 +22,7 @@ class _AllQuotesState extends State<AllQuotes> {
   DataBaseMethods _dataBaseMethods = new DataBaseMethods();
   StreamSubscription _onQuoteAddedSubscribtion;
   StreamSubscription _onUserAddedSubscribtion;
-
+  TextEditingController _searchController = new TextEditingController();
   List<Quot> _quotes;
 //  _AllQuotesState(w);
   @override
@@ -76,6 +77,7 @@ class _AllQuotesState extends State<AllQuotes> {
                       Container(
                           width: scwidth * 1 / 4,
                           child: TextField(
+                            controller: _searchController,
                             decoration: InputDecoration(
                               hintText: 'Search',
                               hintStyle: TextStyle(color: Colors.white70),
@@ -87,7 +89,11 @@ class _AllQuotesState extends State<AllQuotes> {
                           Icons.search,
                           color: Colors.white70,
                         ),
-                        onPressed: () {},
+                        onPressed: ()async {
+                            User u = await _dataBaseMethods.getUser(_searchController.text);
+                            if(u != null)
+                              print(u.email);
+                        },
                       ),
                       SizedBox(width: scwidth * 1 / 20),
                       GestureDetector(
@@ -150,7 +156,8 @@ class _AllQuotesState extends State<AllQuotes> {
                   child: ListView.separated(
                     itemCount: _quotes.length,
                     itemBuilder: (context, index) {
-                      return Quote(DataBaseMethods.currentUser, _quotes[(_quotes.length-1)-index]);
+                      return Quote(DataBaseMethods.currentUser,
+                          _quotes[(_quotes.length - 1) - index]);
                     },
                     separatorBuilder: (context, index) => SizedBox(
                       height: scheight * 1 / 100,
