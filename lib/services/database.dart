@@ -173,7 +173,8 @@ class DataBaseMethods {
             DateTime.now().month.toString() +
             DateTime.now().day.toString() +
             DateTime.now().minute.toString() +
-            DateTime.now().second.toString());
+            DateTime.now().second.toString()+
+            DateTime.now().millisecond.toString());
         _quotReference
         .child(quot.quotID)
         .child('numberOfComments')
@@ -182,7 +183,17 @@ class DataBaseMethods {
       'authorID': currentUser.id,
       'username': currentUser.username,
       'commentText': commentText,
-      'date': key
+      'date': DateTime.now().millisecondsSinceEpoch.toString()
     });
+  }
+
+  getComments(String quotID)async {
+    return await _quotReference
+        .child(quotID)
+        .child('textsOfComments')
+        .orderByChild('date')
+        .limitToFirst(15)
+        .onValue;
+
   }
 }

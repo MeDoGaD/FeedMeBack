@@ -27,6 +27,7 @@ class _QuoteState extends State<Quote> {
   DataBaseMethods _dataBaseMethods = new DataBaseMethods();
   StreamSubscription _onUserAddedSubscribtion;
   StreamSubscription _onCommentAddedSubscribtion;
+  StreamSubscription _onQuoteAddedSubscribtion;
   bool Followed;
   bool liked;
   bool deslike;
@@ -34,21 +35,25 @@ class _QuoteState extends State<Quote> {
   Map<dynamic, dynamic> following, likes, deslikes, stares;
   List<Comment> _comments = new List();
 //  List<CommentUi> _comments = new List();
+  Stream _commentStream;
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
     Followed = false;
     liked = false;
     deslike = false;
     stared = false;
-    _onCommentAddedSubscribtion = FirebaseDatabase.instance
+    _dataBaseMethods.getComments(widget._currentQuote.quotID).then((value) {
+      setState(() {
+        _commentStream = value;
+      });
+    });
+    _onQuoteAddedSubscribtion = FirebaseDatabase.instance
         .reference()
         .child('quot')
         .child(widget._currentQuote.quotID)
-//        .child('numberOfComments')
         .onValue
-        .listen(onCommentAdded);
+        .listen(onQuoteAdded);
     _onUserAddedSubscribtion = FirebaseDatabase.instance
         .reference()
         .child('user')
@@ -56,18 +61,22 @@ class _QuoteState extends State<Quote> {
         .onChildAdded
         .listen(onUserAdded);
 
-    getComments();
+    _dataBaseMethods.getComments(widget._currentQuote.quotID).then((value) {
+      setState(() {
+        _commentStream = value;
+      });
+    });
+    super.initState();
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
     _onUserAddedSubscribtion.cancel();
-    _onCommentAddedSubscribtion.cancel();
+    super.dispose();
   }
 
-  void showBottomSheet() {
+  Widget showBottomSheet() {
     double scheight = MediaQuery.of(context).size.height;
     double scwidth = MediaQuery.of(context).size.width;
     TextEditingController _commentTextController = new TextEditingController();
@@ -75,69 +84,88 @@ class _QuoteState extends State<Quote> {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Text(
-                  "Quote Comments",
-                  style: TextStyle(
-                      color: Colors.blueAccent,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w600),
-                ),
-                SizedBox(
-                  height: scheight * 1 / 70,
-                ),
-                Expanded(
-                  child: ListView.separated(
-//                    reverse: true,
-                      itemBuilder: (context, index) {
-                        return CommentUi(
-                            _comments[(_comments.length - 1) - index]);
-//                        return _comments[index];
-                      },
-                      separatorBuilder: (context, index) => SizedBox(
-                            height: scheight * 1 / 50,
-                          ),
-                      itemCount: _comments.length),
-                ),
-                Row(
+          return StreamBuilder(
+            stream: _commentStream,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return Text("NO DATA");
+
+              bool hasComments = snapshot.data.snapshot.value != null;
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
                   children: [
-                    Container(
-                      width: scwidth * 1 / 8,
-                      height: scheight * 1 / 16,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage('assets/feed1.png'),
-                              fit: BoxFit.fill),
-                          shape: BoxShape.circle),
+                    Text(
+                      "Quote Comments",
+                      style: TextStyle(
+                          color: Colors.blueAccent,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600),
                     ),
-                    Container(
-                        width: scwidth * 0.66,
-                        child: TextField(
-                          controller: _commentTextController,
-                          decoration: InputDecoration(hintText: "Comment ... "),
-                        )),
-                    IconButton(
-                      icon: Icon(
-                        Icons.send,
-                        color: Colors.blue,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          widget._currentQuote.numberOfComments++;
-                          _dataBaseMethods.addComment(
-                              _commentTextController.text,
-                              widget._currentQuote);
-                          _commentTextController.clear();
-                        });
-                      },
+                    SizedBox(
+                      height: scheight * 1 / 70,
+                    ),
+                    Expanded(
+                      child: !hasComments
+                          ? Text("No Comments Founded")
+                          : ListView.separated(
+//                    reverse: true,
+                              itemBuilder: (context, index) {
+                                Map tmp = snapshot.data.snapshot.value;
+                                tmp.forEach((key, value) {
+                                  _comments.add(new Comment(value['authorID'],
+                                      value['username'], value['commentText'],
+                                      date: value['date'], commentID: key));
+                                });
+                                return CommentUi(
+                                    _comments[(_comments.length - 1) - index]);
+//                        return _comments[index];
+                              },
+                              separatorBuilder: (context, index) => SizedBox(
+                                    height: scheight * 1 / 50,
+                                  ),
+                              itemCount: hasComments
+                                  ? snapshot.data.snapshot.value.length
+                                  : 0),
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          width: scwidth * 1 / 8,
+                          height: scheight * 1 / 16,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage('assets/feed1.png'),
+                                  fit: BoxFit.fill),
+                              shape: BoxShape.circle),
+                        ),
+                        Container(
+                            width: scwidth * 0.66,
+                            child: TextField(
+                              controller: _commentTextController,
+                              decoration:
+                                  InputDecoration(hintText: "Comment ... "),
+                            )),
+                        IconButton(
+                          icon: Icon(
+                            Icons.send,
+                            color: Colors.blue,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              widget._currentQuote.numberOfComments++;
+                              _dataBaseMethods.addComment(
+                                  _commentTextController.text,
+                                  widget._currentQuote);
+                              _commentTextController.clear();
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              );
+            },
           );
         });
   }
@@ -387,44 +415,18 @@ class _QuoteState extends State<Quote> {
         _comments.add(new Comment(
             value['authorID'], value['username'], value['commentText'],
             commentID: key, date: value['date']));
-//        print("------------------> ${value['commentText']}");
       });
     }).catchError((e) {});
   }
 
-//  void onCommentAdded(Event event) {
-//    setState(() {
-////      if (event.snapshot.key == "numberOfComments") {
-////        widget._currentQuote.numberOfComments = event.snapshot.value;
-////      }
-////      if (event.snapshot.key == "textsOfComments") {
-////        Map<dynamic, dynamic> tmp = event.snapshot.value;
-////        Map<dynamic, dynamic> tmp2;
-////        tmp.forEach((key, value) {
-////          tmp2 = event.snapshot.value[key];
-////
-////          _comments.add(new Comment(tmp2.values.elementAt(2),
-////              tmp2.values.elementAt(0), tmp2.values.elementAt(3),
-////              commentID: key, date: tmp2.values.elementAt(1)));
-////          print("-------------> ${event.snapshot.value}");
-////        });
-////      }
-//    });
-//  }
-
-  void onCommentChanged(Event event) {
-    print(event.snapshot.value);
-  }
-
-  void onCommentAdded(Event event) {
-    setState(() {
-      print(event.snapshot.value['numberOfComments']);
-//      if(event.snapshot.key == 'numberOfComments')
-        widget._currentQuote.numberOfComments = event.snapshot.value['numberOfComments'];
-//      if(event.snapshot.key == 'likes')
+  void onQuoteAdded(Event event) {
+    if (mounted)
+      setState(() {
+        widget._currentQuote.numberOfComments =
+            event.snapshot.value['numberOfComments'];
         widget._currentQuote.numberOfLikes = event.snapshot.value['likes'];
-//      if(event.snapshot.key == 'deslikes')
-        widget._currentQuote.numberOfDeslikes = event.snapshot.value['deslikes'];
-    });
+        widget._currentQuote.numberOfDeslikes =
+            event.snapshot.value['deslikes'];
+      });
   }
 }
