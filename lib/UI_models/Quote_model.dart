@@ -80,7 +80,7 @@ class _QuoteState extends State<Quote> {
     double scheight = MediaQuery.of(context).size.height;
     double scwidth = MediaQuery.of(context).size.width;
     TextEditingController _commentTextController = new TextEditingController();
-    _comments.sort((a, b) => a.commentID.compareTo(b.commentID));
+    _comments.sort((a, b) => a.date.compareTo(b.date));
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {

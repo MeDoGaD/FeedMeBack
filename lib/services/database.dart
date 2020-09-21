@@ -109,6 +109,16 @@ class DataBaseMethods {
     });
   }
 
+  get(String quotID)async {
+    return await _quotReference
+        .child(quotID)
+        .child('textsOfComments')
+        .orderByChild('date')
+        .limitToFirst(15)
+        .onValue;
+
+  }
+  
   updateQuote(Quot quot) {
     _quotReference.child(quot.quotID).set({
       'title': quot.title,
