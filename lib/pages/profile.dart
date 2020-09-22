@@ -34,10 +34,17 @@ class _ProfileState extends State<Profile> {
   List<Quot> _staredQuotes;
   int _staredQuotesIndex;
   bool _isOnTop = true;
+
+  Query _Quotes;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _Quotes = FirebaseDatabase.instance
+        .reference()
+        .child('user')
+        .child(widget._currentUser.id)
+        .child('staredQuotes');
     _scrollController = new ScrollController();
     _quotes = widget._quotes;
     _staredQuotes = new List<Quot>();
@@ -102,58 +109,79 @@ class _ProfileState extends State<Profile> {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: ListView.separated(
-                        itemBuilder: (context, index) {
-                          if (BottomSheetState == "Followers") {
-                            if (length == 0)
-                              return Text("you have no followers yet!");
+                      padding: const EdgeInsets.all(5.0),
+                      child: StreamBuilder(
+                          stream: _Quotes.onValue,
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData || snapshot.data.snapshot.value == null) return Text("No Data");
 
-                            return Followers_Followings(
-                                0,
-                                (_following.containsKey(
-                                    _followers.keys.elementAt(index))),
-                                _followers.values.elementAt(index),
-                                _followers.keys.elementAt(index));
-                          } else if (BottomSheetState == "Followings") {
-                            if (length == 0)
-                              return Text("you have not followed any one!");
-                            return Followers_Followings(
-                                1,
-                                true,
-                                _following.values.elementAt(index),
-                                _following.keys.elementAt(index));
-                          } else {
-                            String staredQuote = _stars.keys.elementAt(index);
-//                          print(_likes.keys.contains(staredQuote));
-//                          print(_deslikes.keys.contains(staredQuote));
-                            if (length == 0)
-                              return Text("you have no stared Quotes!");
-                            return StaredMsgs(
-                                _staredQuotes[index],
-                                _likes == null
-                                    ? false
-                                    : _likes.keys.contains(staredQuote),
-                                _deslikes == null
-                                    ? false
-                                    : _deslikes.keys.contains(staredQuote));
-                          }
-                        },
-                        separatorBuilder: (context, index) => SizedBox(
-                              height: scheight / 40,
-                            ),
-                        itemCount: length == 0 ? 1 : length),
-                  ),
+                            _stars = snapshot.data.snapshot.value;
+                            length = _stars.length;
+                            _staredQuotes = new List<Quot>();
+                              for (int i = 0; i < _stars.length; i++) {
+                                for (int j = 0; j < _quotes.length; j++) {
+                                  if (_stars.keys.elementAt(i) ==
+                                      _quotes[j].quotID) {
+                                    _staredQuotes.add(_quotes[j]);
+                                  }
+                                }
+                              }
+
+                            return ListView.separated(
+                                itemBuilder: (context, index) {
+                                  if (BottomSheetState == "Followers") {
+                                    if (length == 0)
+                                      return Text("you have no followers yet!");
+
+                                    return Followers_Followings(
+                                        0,
+                                        (_following.containsKey(
+                                            _followers.keys.elementAt(index))),
+                                        _followers.values.elementAt(index),
+                                        _followers.keys.elementAt(index));
+                                  } else if (BottomSheetState == "Followings") {
+                                    if (length == 0)
+                                      return Text(
+                                          "you have not followed any one!");
+                                    return Followers_Followings(
+                                        1,
+                                        true,
+                                        _following.values.elementAt(index),
+                                        _following.keys.elementAt(index));
+                                  } else {
+                                    String staredQuote =
+                                        _stars.keys.elementAt(index);
+                                    if (length == 0)
+                                      return Text("you have no stared Quotes!");
+                                    return StaredMsgs(
+                                        _staredQuotes[index],
+                                        _likes == null
+                                            ? false
+                                            : _likes.keys.contains(staredQuote),
+                                        _deslikes == null
+                                            ? false
+                                            : _deslikes.keys
+                                                .contains(staredQuote));
+                                  }
+                                },
+                                separatorBuilder: (context, index) => SizedBox(
+                                      height: scheight / 40,
+                                    ),
+                                itemCount: length == 0 ? 1 : length);
+                          })),
                 ),
               ],
             ),
           );
+
+        });
         }).whenComplete(() {
 //      print("<<<<<<<<<<<<<<<< CLOSED >>>>>>>>>>>>>>>>>");
 //        setState(() {});
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (BuildContext context) => super.widget));
     });
+
   }
 
   @override
@@ -313,6 +341,24 @@ class _ProfileState extends State<Profile> {
             ),
             Expanded(
               child: ListView.separated(
+
+                    itemCount: _quotes.length,
+                    itemBuilder: (context, index) {
+                      if (_quotes[(_quotes.length - 1) - index].authorName ==
+                          widget._currentUser.username) {
+                        return Quote(widget._currentUser,
+                            _quotes[(_quotes.length - 1) - index]);
+                      } else {
+                        return Container();
+                      }
+                    },
+                    separatorBuilder: (context, index) => SizedBox(
+                      height: _quotes[(_quotes.length - 1) - index].authorName ==
+                          widget._currentUser.username
+                          ? scheight * 1 / 70
+                          : 0,
+                    ),
+                  ),
                 itemCount: _quotes.length,
                 itemBuilder: (context, index) {
                   if (_quotes[(_quotes.length - 1) - index].authorName ==
@@ -361,14 +407,14 @@ class _ProfileState extends State<Profile> {
             _deslikes = event.snapshot.value;
           }
           if (event.snapshot.key == "staredQuotes") {
-            _stars = event.snapshot.value;
-            for (int i = 0; i < _stars.length; i++) {
-              for (int j = 0; j < _quotes.length; j++) {
-                if (_stars.keys.elementAt(i) == _quotes[j].quotID) {
-                  _staredQuotes.add(_quotes[j]);
-                }
-              }
-            }
+//            _stars = event.snapshot.value;
+//            for (int i = 0; i < _stars.length; i++) {
+//              for (int j = 0; j < _quotes.length; j++) {
+//                if (_stars.keys.elementAt(i) == _quotes[j].quotID) {
+//                  _staredQuotes.add(_quotes[j]);
+//                }
+//              }
+//            }
           }
         } catch (e) {
           print(e.toString());
