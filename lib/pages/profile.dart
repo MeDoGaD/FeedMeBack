@@ -118,14 +118,14 @@ class _ProfileState extends State<Profile> {
                             _stars = snapshot.data.snapshot.value;
                             length = _stars.length;
                             _staredQuotes = new List<Quot>();
-                              for (int i = 0; i < _stars.length; i++) {
-                                for (int j = 0; j < _quotes.length; j++) {
-                                  if (_stars.keys.elementAt(i) ==
-                                      _quotes[j].quotID) {
-                                    _staredQuotes.add(_quotes[j]);
-                                  }
+                            for (int i = 0; i < _stars.length; i++) {
+                              for (int j = 0; j < _quotes.length; j++) {
+                                if (_stars.keys.elementAt(i) ==
+                                    _quotes[j].quotID) {
+                                  _staredQuotes.add(_quotes[j]);
                                 }
                               }
+                            }
 
                             return ListView.separated(
                                 itemBuilder: (context, index) {
@@ -150,7 +150,7 @@ class _ProfileState extends State<Profile> {
                                         _following.keys.elementAt(index));
                                   } else {
                                     String staredQuote =
-                                        _stars.keys.elementAt(index);
+                                    _stars.keys.elementAt(index);
                                     if (length == 0)
                                       return Text("you have no stared Quotes!");
                                     return StaredMsgs(
@@ -161,27 +161,19 @@ class _ProfileState extends State<Profile> {
                                         _deslikes == null
                                             ? false
                                             : _deslikes.keys
-                                                .contains(staredQuote));
+                                            .contains(staredQuote));
                                   }
                                 },
                                 separatorBuilder: (context, index) => SizedBox(
-                                      height: scheight / 40,
-                                    ),
+                                  height: scheight / 40,
+                                ),
                                 itemCount: length == 0 ? 1 : length);
                           })),
                 ),
               ],
             ),
           );
-
         });
-        }).whenComplete(() {
-//      print("<<<<<<<<<<<<<<<< CLOSED >>>>>>>>>>>>>>>>>");
-//        setState(() {});
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (BuildContext context) => super.widget));
-    });
-
   }
 
   @override
@@ -192,10 +184,10 @@ class _ProfileState extends State<Profile> {
       body: Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
-          Colors.blue[900],
-          Colors.blue[700],
-          Colors.blue[900],
-        ])),
+              Colors.blue[900],
+              Colors.blue[700],
+              Colors.blue[900],
+            ])),
         child: Padding(
           padding: EdgeInsets.only(top: scheight * 1 / 15),
           child: Column(children: [
@@ -213,20 +205,22 @@ class _ProfileState extends State<Profile> {
                         shape: BoxShape.circle),
                   ),
                   SizedBox(width: scwidth * 1 / 15),
-                  Container(
-                      width: scwidth * 1 / 4,
-                      child: TextField(onTap: (){
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => new Search()));
-                      },
-                        decoration: InputDecoration(
-                          hintText: 'Search',
-                          hintStyle: TextStyle(color: Colors.white70),
-                        ),
-                        style: TextStyle(color: Colors.white),
-                      )),
+
+                    Container(
+                        width: scwidth * 1 / 4,
+                        child: TextField(onTap: (){
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => new Search()));
+                        },
+                          decoration: InputDecoration(
+                            hintText: 'Search',
+                            hintStyle: TextStyle(color: Colors.white70),
+                          ),
+                          style: TextStyle(color: Colors.white),
+                        )),
+
                   IconButton(
                     icon: Icon(
                       Icons.search,
@@ -341,24 +335,6 @@ class _ProfileState extends State<Profile> {
             ),
             Expanded(
               child: ListView.separated(
-
-                    itemCount: _quotes.length,
-                    itemBuilder: (context, index) {
-                      if (_quotes[(_quotes.length - 1) - index].authorName ==
-                          widget._currentUser.username) {
-                        return Quote(widget._currentUser,
-                            _quotes[(_quotes.length - 1) - index]);
-                      } else {
-                        return Container();
-                      }
-                    },
-                    separatorBuilder: (context, index) => SizedBox(
-                      height: _quotes[(_quotes.length - 1) - index].authorName ==
-                          widget._currentUser.username
-                          ? scheight * 1 / 70
-                          : 0,
-                    ),
-                  ),
                 itemCount: _quotes.length,
                 itemBuilder: (context, index) {
                   if (_quotes[(_quotes.length - 1) - index].authorName ==
@@ -371,11 +347,13 @@ class _ProfileState extends State<Profile> {
                 },
                 separatorBuilder: (context, index) => SizedBox(
                   height: _quotes[(_quotes.length - 1) - index].authorName ==
-                          widget._currentUser.username
+                      widget._currentUser.username
                       ? scheight * 1 / 70
                       : 0,
                 ),
               ),
+
+
             ),
           ]),
         ),
