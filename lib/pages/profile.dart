@@ -5,6 +5,7 @@ import 'package:feedme/model/quot_model.dart';
 import 'package:feedme/model/user_model.dart';
 import 'package:feedme/pages/InsertQuote.dart';
 import 'package:feedme/pages/quotes.dart';
+import 'package:feedme/pages/search.dart';
 import 'package:feedme/services/database.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/gestures.dart';
@@ -172,7 +173,15 @@ class _ProfileState extends State<Profile> {
               ],
             ),
           );
+
         });
+        }).whenComplete(() {
+//      print("<<<<<<<<<<<<<<<< CLOSED >>>>>>>>>>>>>>>>>");
+//        setState(() {});
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (BuildContext context) => super.widget));
+    });
+
   }
 
   @override
@@ -206,7 +215,12 @@ class _ProfileState extends State<Profile> {
                   SizedBox(width: scwidth * 1 / 15),
                   Container(
                       width: scwidth * 1 / 4,
-                      child: TextField(
+                      child: TextField(onTap: (){
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => new Search()));
+                      },
                         decoration: InputDecoration(
                           hintText: 'Search',
                           hintStyle: TextStyle(color: Colors.white70),
@@ -218,7 +232,12 @@ class _ProfileState extends State<Profile> {
                       Icons.search,
                       color: Colors.white70,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => new Search()));
+                    },
                   ),
                   SizedBox(width: scwidth * 1 / 17),
                   GestureDetector(
@@ -322,6 +341,7 @@ class _ProfileState extends State<Profile> {
             ),
             Expanded(
               child: ListView.separated(
+
                     itemCount: _quotes.length,
                     itemBuilder: (context, index) {
                       if (_quotes[(_quotes.length - 1) - index].authorName ==
@@ -339,8 +359,23 @@ class _ProfileState extends State<Profile> {
                           : 0,
                     ),
                   ),
-
-
+                itemCount: _quotes.length,
+                itemBuilder: (context, index) {
+                  if (_quotes[(_quotes.length - 1) - index].authorName ==
+                      widget._currentUser.username) {
+                    return Quote(widget._currentUser,
+                        _quotes[(_quotes.length - 1) - index]);
+                  } else {
+                    return Container();
+                  }
+                },
+                separatorBuilder: (context, index) => SizedBox(
+                  height: _quotes[(_quotes.length - 1) - index].authorName ==
+                          widget._currentUser.username
+                      ? scheight * 1 / 70
+                      : 0,
+                ),
+              ),
             ),
           ]),
         ),
