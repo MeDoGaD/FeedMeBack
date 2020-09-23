@@ -1,3 +1,4 @@
+import 'package:feedme/Animation/FadeAnimation.dart';
 import 'package:feedme/model/user_model.dart';
 import 'package:feedme/pages/quotes.dart';
 import 'package:feedme/services/AuthMethods.dart';
@@ -30,20 +31,13 @@ class _SignupState extends State<Register> {
   User newUser;
 
   signMeUp(){
-    if(formkey.currentState.validate()) {
+
 
       setState(() {isloading=true;});
 
-//      _username.text = "m";
-//      _email.text = "test@test.com";
-//      _password.text = "1";
       authMethods.signUpwithEmailAndPassword(_email.text, _password.text).then((value) {
         newUser = new User(email: _email.text, password: _password.text,username: _username.text);
         if(AuthMethods.found==true) {
-//          Map<String, String>usermap = {
-//            "email": _email.text,
-//            "name": _username.text,
-//          };
           HelperFunctions.saveUserLoggedIN(true);
           HelperFunctions.saveUsername(_username.text);
           HelperFunctions.saveUserEmail(_email.text);
@@ -74,56 +68,159 @@ class _SignupState extends State<Register> {
             isloading=false;
           });
         }});
-    }
+
   }
   @override
   Widget build(BuildContext context) {
+    double scheight = MediaQuery.of(context).size.height;
+    double scwidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: Text('Create new account',style: TextStyle(color: Colors.black54),),
-        backgroundColor: Colors.yellow[200],
-      ),
-      body:isloading?Container(child:Center(child: CircularProgressIndicator()) ,): Center(
-        child: SingleChildScrollView(
-          child: Center(
-            child: Column(mainAxisAlignment: MainAxisAlignment.center,children: [
-              Form(key: formkey,child: Column(
-                children: [
-                  TextFormField(validator: (val){
-                    return val.isEmpty||val.length<2 ? 'Please provide a valid the Username':null;
-                  },controller: _username,style: simpleTextFieldStyle(),
-                    decoration:textfield("Username"),),
-                  TextFormField(validator: (val){
-                    return RegExp(r"^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})").hasMatch(val)?null:'Please provide a valid the email';
-                  },controller: _email,style: simpleTextFieldStyle(),
-                      decoration:textfield("Email")),
-                  TextFormField(obscureText: true,validator: (val){
-                    return val.length<6 ? 'The password must be larger than 6 characters':null;
-                  },controller: _password,style: simpleTextFieldStyle(),
-                      decoration:textfield("Password")),
-                ],
-              ),),
-              SizedBox(height: 8,),
-              Container(child: RaisedButton(child:Text('Signup'),onPressed: (){
-                signMeUp();
-              },
-                shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)) ,),),
-              Container(child: RaisedButton(child:Text('Sign up with Google'),onPressed: (){
-              },
-                shape:RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)) ,),),
-              SizedBox(height: 8,),
-              GestureDetector(onTap: (){
-                widget.toggle();
-              },
-                child: Row(mainAxisAlignment: MainAxisAlignment.center,children: [
-                  Text("Already have account? ",style: mediumTextStyle(),),
-                  Text("SignIn Now",style: TextStyle(color: Colors.white,fontSize:16,decoration:TextDecoration.underline ),),
-                ],),
+        resizeToAvoidBottomPadding: false,
+        backgroundColor: Colors.white,
+        body:isloading?Container(child:Center(child: CircularProgressIndicator()) ,): Container(
+          child: Column(
+            children: [
+              Container(
+                height: scheight*0.5,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage("assets/background.png"),
+                        fit: BoxFit.fill)),
+                child: Stack(
+                  children: <Widget>[
+                    Positioned(
+                      left: 30,
+                      width: 80,
+                      height: 200,
+                      child:FadeAnimation(1.0, Container(
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage('assets/light-1.png'))),
+                      )),
+                    ),
+                    Positioned(
+                      left: 140,
+                      width: 80,
+                      height: 150,
+                      child:FadeAnimation(1.3,Container(
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage('assets/light-2.png'))),
+                      )),
+                    ),
+                    Positioned(
+                      right: 40,
+                      width: 80,
+                      height: 150,
+                      child:FadeAnimation(1.5, Container(
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage('assets/clock.png'))),
+                      )),
+                    ),
+                    Positioned(
+                      child:FadeAnimation(1.6, Container(
+                          margin: EdgeInsets.only(top: 50),
+                          child: Center(
+                            child: Text(
+                              "SignUp",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ))),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(30.0),
+                child: Column(
+                  children: [
+                    FadeAnimation(1.8, Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Color.fromRGBO(143, 148, 251, .2),
+                                blurRadius: 20.0,
+                                offset: Offset(0, 10))
+                          ]),
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                                border: Border(
+                                    bottom:
+                                    BorderSide(color: Colors.grey[100]))),
+                            child: TextField(
+                              controller: _username,
+                              decoration: textfield("Username"),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                                border: Border(
+                                    bottom:
+                                    BorderSide(color: Colors.grey[100]))),
+                            child: TextField(
+                              controller: _email,
+                              decoration: textfield("Email"),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(8.0),
+                            child: TextField(
+                              obscureText: true,
+                              controller: _password,
+                              decoration: textfield("Password"),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    FadeAnimation(2.0, GestureDetector(onTap: (){
+                      signMeUp();
+                    },
+                      child: Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(colors: [
+                              Color.fromRGBO(143, 148, 251, 1),
+                              Color.fromRGBO(143, 148, 251, .6),
+                            ])),
+                        child: Center(
+                          child: Text(
+                            "SignUp",
+                            style: TextStyle(
+                                color: Colors.white, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    )),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    FadeAnimation(1.5, Row(mainAxisAlignment: MainAxisAlignment.end,children: [
+                      Text("Already have account? ",style: TextStyle(fontSize: 12,color: Color.fromRGBO(143, 148, 251, 1) ),),
+                      GestureDetector(onTap: (){
+                        widget.toggle();
+                      },child: Text("SignIn Now?",style: TextStyle(fontSize: 12,color: Color.fromRGBO(143, 148, 251, 1),decoration:TextDecoration.underline))),
+                    ],)),
+
+                  ],
+                ),
               )
-            ],),),
-        ),
-      ) ,
-    );
+            ],
+          ),
+        ));
   }
 }

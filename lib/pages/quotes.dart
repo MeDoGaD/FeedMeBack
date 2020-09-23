@@ -56,6 +56,8 @@ class _AllQuotesState extends State<AllQuotes> {
           Colors.blue[900],
           Colors.blue[700],
           Colors.blue[900],
+              //Color.fromRGBO(143, 148, 251, 1),
+             // Color.fromRGBO(143, 148, 251, .7),
         ])),
         child: Padding(
             padding: EdgeInsets.only(top: scheight * 1 / 15),
@@ -70,7 +72,7 @@ class _AllQuotesState extends State<AllQuotes> {
                         height: scheight * 1 / 16,
                         decoration: BoxDecoration(
                             image: DecorationImage(
-                                image: AssetImage('assets/feed1.png'),
+                                image: AssetImage('assets/notes.png'),
                                 fit: BoxFit.fill),
                             shape: BoxShape.circle),
                       ),

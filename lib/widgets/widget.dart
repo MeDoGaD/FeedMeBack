@@ -4,10 +4,7 @@ InputDecoration textfield(String hint)
 {
   return InputDecoration(
       hintText: hint,
-      hintStyle: TextStyle(color: Colors.white),
-      focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.white)),
-      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)));
+      hintStyle: TextStyle(color: Colors.grey[400]),border: InputBorder.none);
 
 }
 

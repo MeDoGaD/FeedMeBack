@@ -29,16 +29,16 @@ class _Start_PageState extends State<Start_Page> {
     double scwidth=MediaQuery.of(context).size.width;
     double scheight=MediaQuery.of(context).size.height;
     return (Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body: Padding(
         padding:  EdgeInsets.only(top:scheight*1/4 ),
         child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.start,children: [
-          Text('FeedMeBack',style: TextStyle(color: Colors.yellow[100],fontSize: 42,fontWeight: FontWeight.bold),),
+          Text('FeedMeBack',style: TextStyle(color: Color.fromRGBO(143, 148, 251, 1),fontSize: 42,fontWeight: FontWeight.bold),),
           SizedBox(height: scheight*1/22,),
-          Container(width: scwidth*0.4,height: scheight*1/5,decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/feed1.png'),fit: BoxFit.fill)),),
+          Container(width: scwidth*0.4,height: scheight*1/5,decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/notes.png'),fit: BoxFit.fill)),),
           Padding(
             padding:  EdgeInsets.only(top: scheight*0.29),
-            child: Container(width: scwidth*1/2,height: scheight*1/17,child: RaisedButton(color: Colors.yellow[300],onPressed: ()async{
+            child: Container(width: scwidth*1/2,height: scheight*1/17,child: RaisedButton(color: Color.fromRGBO(143, 148, 251,0.8),onPressed: ()async{
              // if(isLoggedIn==null){
               Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>Authenticate()));//}
              // else
@@ -49,7 +49,7 @@ class _Start_PageState extends State<Start_Page> {
                 // print(DataBaseMethods.currentUser.username);
                 // Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>AllQuotes()));
                // }
-            },child: Text('Start Now',style: TextStyle(color: Colors.black,fontSize: 20),),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),)),
+            },child: Text('Start Now',style: TextStyle(color: Colors.white,fontSize: 20),),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),)),
           ),
         ],),),
       ),
