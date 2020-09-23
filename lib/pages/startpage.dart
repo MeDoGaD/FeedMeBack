@@ -9,19 +9,6 @@ class Start_Page extends StatefulWidget {
 }
 
 class _Start_PageState extends State<Start_Page> {
-  bool isLoggedIn=false;
-
-  void initState() {
-    getLoggedInState();
-    super.initState();
-  }
-  getLoggedInState()async{
-    await HelperFunctions.getUserLoggedIN().then((value) {
-      setState(() {
-        isLoggedIn=value;
-      });
-    });
-  }
   DataBaseMethods dataBaseMethods=new DataBaseMethods();
   HelperFunctions helper=new HelperFunctions();
   @override
@@ -39,16 +26,7 @@ class _Start_PageState extends State<Start_Page> {
           Padding(
             padding:  EdgeInsets.only(top: scheight*0.29),
             child: Container(width: scwidth*1/2,height: scheight*1/17,child: RaisedButton(color: Color.fromRGBO(143, 148, 251,0.8),onPressed: ()async{
-             // if(isLoggedIn==null){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>Authenticate()));//}
-             // else
-               // {
-                // String email=HelperFunctions.getUserEmail().toString();
-                // await dataBaseMethods.getUserByUseremail(email);
-                // print("***************");
-                // print(DataBaseMethods.currentUser.username);
-                // Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>AllQuotes()));
-               // }
+              Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>Authenticate()));
             },child: Text('Start Now',style: TextStyle(color: Colors.white,fontSize: 20),),shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),)),
           ),
         ],),),
