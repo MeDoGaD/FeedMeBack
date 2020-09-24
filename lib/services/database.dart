@@ -98,25 +98,9 @@ class DataBaseMethods {
     });
   }
 
-  Future<User> getUser(String username)async {
-    _userReference.once().then((DataSnapshot snapshot) {
-      Map<dynamic, dynamic> data = snapshot.value;
-      data.forEach((key, value) {
-        if(value['username'] == username)
-          return Future(()=> User(username: username, email: value['email'],id: key));
-//        print(value['username']);
-      });
-    });
-  }
-
-  get(String quotID)async {
-    return await _quotReference
-        .child(quotID)
-        .child('textsOfComments')
-        .orderByChild('date')
-        .limitToFirst(15)
-        .onValue;
-
+ getUser(String username)async {
+    User resultUser;
+    return await _userReference.once();
   }
   
   updateQuote(Quot quot) {
@@ -193,7 +177,7 @@ class DataBaseMethods {
       'authorID': currentUser.id,
       'username': currentUser.username,
       'commentText': commentText,
-      'date': DateTime.now().millisecondsSinceEpoch.toString()
+      'date': int.parse(key)
     });
   }
 

@@ -3,7 +3,7 @@ import 'package:feedme/UI_models/CommentUi_model.dart';
 import 'package:feedme/model/quot_model.dart';
 import 'package:feedme/model/user_model.dart';
 import 'package:feedme/pages/profile.dart';
-import 'package:feedme/pages/search.dart';
+import 'package:feedme/pages/searchresult.dart';
 import 'package:feedme/services/database.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -52,13 +52,18 @@ class _AllQuotesState extends State<AllQuotes> {
     return (Scaffold(
       body: Container(
         decoration: BoxDecoration(
+//            gradient: LinearGradient(colors: [
+//          Colors.blue[900],
+//          Colors.blue[700],
+//          Colors.blue[900],
             gradient: LinearGradient(colors: [
-          Colors.blue[900],
-          Colors.blue[700],
-          Colors.blue[900],
+              Color.fromRGBO(143, 148, 251, 1),
+              Color.fromRGBO(143, 148, 251, .6),
+              Color.fromRGBO(143, 148, 251, 1),
+            ])),
               //Color.fromRGBO(143, 148, 251, 1),
              // Color.fromRGBO(143, 148, 251, .7),
-        ])),
+//        ])),
         child: Padding(
             padding: EdgeInsets.only(top: scheight * 1 / 15),
             child: Column(
@@ -79,10 +84,7 @@ class _AllQuotesState extends State<AllQuotes> {
                       SizedBox(width: scwidth * 1 / 15),
                       Container(
                           width: scwidth * 1 / 4,
-                          child: TextField(onTap: (){ Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => new Search()));},
+                          child: TextField(
                             controller: _searchController,
                             decoration: InputDecoration(
                               hintText: 'Search',
@@ -96,13 +98,10 @@ class _AllQuotesState extends State<AllQuotes> {
                           color: Colors.white70,
                         ),
                         onPressed: ()async {
-                           // User u = await _dataBaseMethods.getUser(_searchController.text);
-                            //if(u != null)
-                             // print(u.email);
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => new Search()));
+                                  builder: (context) => new SearchResult(searchUsername:  _searchController.text,)));
                         },
                       ),
                       SizedBox(width: scwidth * 1 / 20),

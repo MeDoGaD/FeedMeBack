@@ -5,7 +5,7 @@ import 'package:feedme/model/quot_model.dart';
 import 'package:feedme/model/user_model.dart';
 import 'package:feedme/pages/InsertQuote.dart';
 import 'package:feedme/pages/quotes.dart';
-import 'package:feedme/pages/search.dart';
+import 'package:feedme/pages/searchresult.dart';
 import 'package:feedme/services/database.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/gestures.dart';
@@ -36,10 +36,13 @@ class _ProfileState extends State<Profile> {
   bool _isOnTop = true;
 
   Query _Quotes;
+
+  TextEditingController _searchController;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _searchController = new TextEditingController();
     _Quotes = FirebaseDatabase.instance
         .reference()
         .child('user')
@@ -210,12 +213,8 @@ class _ProfileState extends State<Profile> {
 
                     Container(
                         width: scwidth * 1 / 4,
-                        child: TextField(onTap: (){
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => new Search()));
-                        },
+                        child: TextField(
+                          controller: _searchController,
                           decoration: InputDecoration(
                             hintText: 'Search',
                             hintStyle: TextStyle(color: Colors.white70),
@@ -232,7 +231,7 @@ class _ProfileState extends State<Profile> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => new Search()));
+                              builder: (context) => new SearchResult(searchUsername: _searchController.text,)));
                     },
                   ),
                   SizedBox(width: scwidth * 1 / 17),

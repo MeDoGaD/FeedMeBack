@@ -30,7 +30,7 @@ class _Followers_FollowingsState extends State<Followers_Followings>{
             height: scheight * 1 / 16,
             decoration: BoxDecoration(
                 color: Colors.blueAccent,
-                image: DecorationImage(image: AssetImage('assets/feed1.png')),
+                image: DecorationImage(image: AssetImage('assets/notes.png')),
                 shape: BoxShape.circle),
           ),
           SizedBox(

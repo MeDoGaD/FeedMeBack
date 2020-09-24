@@ -75,11 +75,17 @@ if(isLoggedIn!=null) {
 
     if (_currentUser != null) {
       authMethods
-          .signInWithEmailAndPassword(_useremail.text, _password.text)
+          .signInWithEmailAndPassword(_useremail.text.trim(), _password.text)
           .then((value) {
         if (value != null) {
           // TODO login success
+//<<<<<<< master
+         // HelperFunctions.saveUserEmail(_useremail.text.trim());
+         // HelperFunctions.saveUserLoggedIN(true);
+         // HelperFunctions.saveUsername(_currentUser.username.trim());
+//=======
           HelperFunctions.saveUsername(_currentUser.username);
+//>>>>>>> master
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => AllQuotes()));
         } else {
@@ -122,7 +128,7 @@ if(isLoggedIn!=null) {
           child: Column(
             children: [
               Container(
-                height: scheight*0.5,
+                height: scheight*0.35,
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage("assets/background.png"),
@@ -218,7 +224,7 @@ if(isLoggedIn!=null) {
                       height: 30,
                     ),
                 FadeAnimation(2.0, GestureDetector(onTap: (){signIn();
-                Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>AllQuotes()));},
+                Navigator.push(context, MaterialPageRoute(builder:(context)=>AllQuotes()));},
                   child: Container(
                         height: 50,
                         decoration: BoxDecoration(
