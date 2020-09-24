@@ -187,9 +187,9 @@ class _ProfileState extends State<Profile> {
       body: Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
-              Colors.blue[900],
-              Colors.blue[700],
-              Colors.blue[900],
+              Color.fromRGBO(143, 148, 251, 1),
+              Color.fromRGBO(143, 148, 251, .6),
+              Color.fromRGBO(143, 148, 251, 1),
               //Color.fromRGBO(143, 148, 251, 1),
               //Color.fromRGBO(143, 148, 251, .7),
             ])),

@@ -32,7 +32,7 @@ class _SearchResultState extends State<SearchResult> {
     _dataBaseMethods = DataBaseMethods();
   }
 
-  Widget searchTile({String username, String useremail}) {
+  Widget searchTile(String username, String useremail) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Row(
@@ -50,19 +50,36 @@ class _SearchResultState extends State<SearchResult> {
               ),
             ],
           ),
-          Spacer(),
-          GestureDetector(
-            onTap: () {},
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.blue, borderRadius: BorderRadius.circular(30)),
+        Row(mainAxisAlignment: MainAxisAlignment.start,children: [
+
+        ],),
+             Spacer(flex: 10,),
+          Container(
+               decoration: BoxDecoration(borderRadius: BorderRadius.circular(30),
+                   gradient: LinearGradient(colors: [
+                     Color.fromRGBO(143, 148, 251, 1),
+                     Color.fromRGBO(143, 148, 251, .6),
+                   ])),
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Text(
-                "Show Profile",
-                style: mediumTextStyle(),
+                "Profile",
+                style: TextStyle(color: Colors.white,fontSize: 14),
               ),
             ),
+          Spacer(),
+          Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(30),
+                gradient: LinearGradient(colors: [
+                  Color.fromRGBO(143, 148, 251, 1),
+                  Color.fromRGBO(143, 148, 251, .6),
+                ])),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Text(
+              "Follow",
+              style:TextStyle(color: Colors.white,fontSize: 14),
+            ),
           ),
+
         ],
       ),
     );
@@ -72,7 +89,7 @@ class _SearchResultState extends State<SearchResult> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.black,
-        appBar: AppBar(
+        appBar: AppBar(backgroundColor:Color.fromRGBO(143, 148, 251, 1),
           title: Text("Search"),
         ),
         body: FutureBuilder(
@@ -92,19 +109,24 @@ class _SearchResultState extends State<SearchResult> {
                   style: TextStyle(color: Colors.white),
                 ),
               );
-            Map tmp = snap.data.value;
-            bool found = false;
-            tmp.forEach((key, value) {
-              if (value['username'] == widget.searchUsername.trim()) {
-                widget.searchUser = new User(
-                    username: value['username'],
-                    email: value['email'],
-                    password: value['password'],
-                    id: key);
-                found = true;
-              }
-            });
-            return Container(
+            else {
+              Map tmp = snap.data.value;
+              bool found = false;
+              tmp.forEach((key, value) {
+                if (value['username'] == widget.searchUsername.trim()) {
+                  widget.searchUser = new User(
+                      username: value['username'],
+                      email: value['email'],
+                      password: value['password'],
+                      id: key);
+                  found = true;
+                }
+              });
+              return Column(mainAxisAlignment: MainAxisAlignment.start, children: [ searchTile(
+                  widget.searchUser.username, widget.searchUser.email),],);
+
+            }
+          /* return Container(
               child: Center(
                   child: Text(
                 found
@@ -112,7 +134,8 @@ class _SearchResultState extends State<SearchResult> {
                     : "Couldn't find user ${widget.searchUsername}",
                 style: TextStyle(color: Colors.white),
               )),
-            );
+            );*/
+
           },
         ));
   }

@@ -52,18 +52,11 @@ class _AllQuotesState extends State<AllQuotes> {
     return (Scaffold(
       body: Container(
         decoration: BoxDecoration(
-//            gradient: LinearGradient(colors: [
-//          Colors.blue[900],
-//          Colors.blue[700],
-//          Colors.blue[900],
             gradient: LinearGradient(colors: [
               Color.fromRGBO(143, 148, 251, 1),
               Color.fromRGBO(143, 148, 251, .6),
               Color.fromRGBO(143, 148, 251, 1),
             ])),
-              //Color.fromRGBO(143, 148, 251, 1),
-             // Color.fromRGBO(143, 148, 251, .7),
-//        ])),
         child: Padding(
             padding: EdgeInsets.only(top: scheight * 1 / 15),
             child: Column(
