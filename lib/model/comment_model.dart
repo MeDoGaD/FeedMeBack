@@ -4,7 +4,7 @@ class Comment {
   String authorID;
   String authorName;
   String text;
-  String date;
+  int date;
 //  int commentIndex;
   Comment(this.authorID,this.authorName,this.text,{this.commentID, this.date});
 }

@@ -6,6 +6,7 @@ import 'package:feedme/model/quot_model.dart';
 import 'package:feedme/model/user_model.dart';
 import 'package:feedme/pages/quotes.dart';
 import 'package:feedme/services/database.dart';
+import 'package:feedme/services/quicksort.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -81,6 +82,9 @@ class _QuoteState extends State<Quote> {
     double scwidth = MediaQuery.of(context).size.width;
     TextEditingController _commentTextController = new TextEditingController();
     _comments.sort((a, b) => a.date.compareTo(b.date));
+//    List<Comment> x = _comments;
+//    QuickSort.sort(_comments);
+//    _comments.forEach((element) {print(element.text);});
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
@@ -134,7 +138,7 @@ class _QuoteState extends State<Quote> {
                           height: scheight * 1 / 16,
                           decoration: BoxDecoration(
                               image: DecorationImage(
-                                  image: AssetImage('assets/feed1.png'),
+                                  image: AssetImage('assets/notes.png'),
                                   fit: BoxFit.fill),
                               shape: BoxShape.circle),
                         ),
@@ -184,6 +188,7 @@ class _QuoteState extends State<Quote> {
         child: Container(
           width: scwidth * 0.8,
           decoration: BoxDecoration(
+            color: Colors.white,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
@@ -209,7 +214,7 @@ class _QuoteState extends State<Quote> {
                     Text(
                       widget._currentQuote.authorName,
                       style: TextStyle(
-                          color: Colors.white,
+//                          color: Colors.white,
                           fontSize: widget._currentQuote.authorName.length > 6
                               ? 18
                               : 24),
@@ -230,14 +235,14 @@ class _QuoteState extends State<Quote> {
                 padding: EdgeInsets.only(left: 4, right: 4),
                 child: Text(
                   widget._currentQuote.title,
-                  style: TextStyle(color: Colors.white, fontSize: 22),
+                  style: TextStyle( fontSize: 22),
                 ),
               ),
               Padding(
                 padding: EdgeInsets.only(left: 4, right: 4),
                 child: Text(
                   widget._currentQuote.text,
-                  style: TextStyle(color: Colors.white70, fontSize: 18),
+                  style: TextStyle(color: Colors.black54, fontSize: 18),
                 ),
               ),
               SizedBox(height: scheight / 40),

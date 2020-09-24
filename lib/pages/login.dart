@@ -48,13 +48,13 @@ class _loginState extends State<Login> {
 
     if (_currentUser != null) {
       authMethods
-          .signInWithEmailAndPassword(_useremail.text, _password.text)
+          .signInWithEmailAndPassword(_useremail.text.trim(), _password.text)
           .then((value) {
         if (value != null) {
           // TODO login success
-          HelperFunctions.saveUserEmail(_useremail.text);
+          HelperFunctions.saveUserEmail(_useremail.text.trim());
           HelperFunctions.saveUserLoggedIN(true);
-          HelperFunctions.saveUsername(_currentUser.username);
+          HelperFunctions.saveUsername(_currentUser.username.trim());
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => AllQuotes()));
         } else {
@@ -97,7 +97,7 @@ class _loginState extends State<Login> {
           child: Column(
             children: [
               Container(
-                height: scheight*0.5,
+                height: scheight*0.35,
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage("assets/background.png"),
@@ -193,7 +193,7 @@ class _loginState extends State<Login> {
                       height: 30,
                     ),
                 FadeAnimation(2.0, GestureDetector(onTap: (){signIn();
-                Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=>AllQuotes()));},
+                Navigator.push(context, MaterialPageRoute(builder:(context)=>AllQuotes()));},
                   child: Container(
                         height: 50,
                         decoration: BoxDecoration(
