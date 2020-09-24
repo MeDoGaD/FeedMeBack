@@ -28,15 +28,42 @@ class _loginState extends State<Login> {
   AuthMethods authMethods = new AuthMethods();
   DataBaseMethods dataBaseMethods = new DataBaseMethods();
   bool isloading = false;
+  bool isLoggedIn=false;
   QuerySnapshot snapshotUserInfo;
   StreamSubscription _onUserAddedSubscribtion;
   User _currentUser;
+
   @override
   void initState() {
+    getLoggedInState();
     super.initState();
+
+  }
+  getLoggedInState()async{
+
+    await HelperFunctions.getUserLoggedIN().then((value) {
+      setState(() {
+        isLoggedIn=value;
+      });
+    });
+if(isLoggedIn!=null) {
+  await HelperFunctions.getUserEmail().then((value) {
+    setState(() {
+      _useremail.text = value;
+    });
+  });
+  await HelperFunctions.getPassword().then((value) {
+    setState(() {
+      _password.text = value;
+    });
+  });
+}
   }
 
   signIn() {
+    HelperFunctions.saveUserEmail(_useremail.text);
+    HelperFunctions.saveUserLoggedIN(true);
+    HelperFunctions.savePassword(_password.text);
     setState(() {
       isloading = true;
     });
@@ -52,9 +79,13 @@ class _loginState extends State<Login> {
           .then((value) {
         if (value != null) {
           // TODO login success
-          HelperFunctions.saveUserEmail(_useremail.text.trim());
-          HelperFunctions.saveUserLoggedIN(true);
-          HelperFunctions.saveUsername(_currentUser.username.trim());
+//<<<<<<< master
+         // HelperFunctions.saveUserEmail(_useremail.text.trim());
+         // HelperFunctions.saveUserLoggedIN(true);
+         // HelperFunctions.saveUsername(_currentUser.username.trim());
+//=======
+          HelperFunctions.saveUsername(_currentUser.username);
+//>>>>>>> master
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => AllQuotes()));
         } else {
