@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:feedme/Animation/FadeAnimation.dart';
+import 'package:feedme/UI_models/Quote_model.dart';
+import 'package:feedme/model/quot_model.dart';
 import 'package:feedme/model/user_model.dart';
 import 'package:feedme/pages/quotes.dart';
 import 'package:feedme/services/database.dart';
@@ -28,66 +30,59 @@ class _loginState extends State<Login> {
   AuthMethods authMethods = new AuthMethods();
   DataBaseMethods dataBaseMethods = new DataBaseMethods();
   bool isloading = false;
-  bool isLoggedIn=false;
+  bool isLoggedIn = false;
   QuerySnapshot snapshotUserInfo;
   StreamSubscription _onUserAddedSubscribtion;
   User _currentUser;
 
   @override
   void initState() {
-    getLoggedInState();
     super.initState();
-
-  }
-  getLoggedInState()async{
-
-    await HelperFunctions.getUserLoggedIN().then((value) {
-      setState(() {
-        isLoggedIn=value;
-      });
-    });
-if(isLoggedIn!=null) {
-  await HelperFunctions.getUserEmail().then((value) {
-    setState(() {
-      _useremail.text = value;
-    });
-  });
-  await HelperFunctions.getPassword().then((value) {
-    setState(() {
-      _password.text = value;
-    });
-  });
-}
-  }
-
-  signIn() {
-    HelperFunctions.saveUserEmail(_useremail.text);
-    HelperFunctions.saveUserLoggedIN(true);
-    HelperFunctions.savePassword(_password.text);
-    setState(() {
-      isloading = true;
-    });
+    getLoggedInState();
     _onUserAddedSubscribtion = FirebaseDatabase.instance
         .reference()
         .child('user')
         .onChildAdded
         .listen(onUserAdded);
 
+  }
+
+  getLoggedInState() async {
+    await HelperFunctions.getUserLoggedIN().then((value) {
+      setState(() {
+        isLoggedIn = value;
+      });
+    });
+    if (isLoggedIn != null) {
+      await HelperFunctions.getUserEmail().then((value) {
+        setState(() {
+          _useremail.text = value;
+        });
+      });
+      await HelperFunctions.getPassword().then((value) {
+        setState(() {
+          _password.text = value;
+        });
+      });
+
+    }
+  }
+
+  signIn() {
+    HelperFunctions.saveUserEmail(_useremail.text.trim());
+    HelperFunctions.saveUserLoggedIN(true);
+    HelperFunctions.savePassword(_password.text);
+    setState(() {
+      isloading = true;
+    });
+
     if (_currentUser != null) {
       authMethods
-          .signInWithEmailAndPassword(_useremail.text.trim(), _password.text)
+          .signInWithEmailAndPassword(_useremail.text, _password.text)
           .then((value) {
         if (value != null) {
           // TODO login success
-//<<<<<<< master
-         // HelperFunctions.saveUserEmail(_useremail.text.trim());
-         // HelperFunctions.saveUserLoggedIN(true);
-         // HelperFunctions.saveUsername(_currentUser.username.trim());
-//=======
           HelperFunctions.saveUsername(_currentUser.username);
-//>>>>>>> master
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AllQuotes()));
         } else {
           showDialog(
               context: context,
@@ -128,7 +123,7 @@ if(isLoggedIn!=null) {
           child: Column(
             children: [
               Container(
-                height: scheight*0.35,
+                height: scheight * 0.35,
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage("assets/background.png"),
@@ -139,44 +134,52 @@ if(isLoggedIn!=null) {
                       left: 30,
                       width: 80,
                       height: 200,
-                      child:FadeAnimation(1.0, Container(
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage('assets/light-1.png'))),
-                      )),
+                      child: FadeAnimation(
+                          1.0,
+                          Container(
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage('assets/light-1.png'))),
+                          )),
                     ),
                     Positioned(
                       left: 140,
                       width: 80,
                       height: 150,
-                      child:FadeAnimation(1.3,Container(
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage('assets/light-2.png'))),
-                      )),
+                      child: FadeAnimation(
+                          1.3,
+                          Container(
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage('assets/light-2.png'))),
+                          )),
                     ),
                     Positioned(
                       right: 40,
                       width: 80,
                       height: 150,
-                      child:FadeAnimation(1.5, Container(
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage('assets/clock.png'))),
-                      )),
+                      child: FadeAnimation(
+                          1.5,
+                          Container(
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage('assets/clock.png'))),
+                          )),
                     ),
                     Positioned(
-                      child:FadeAnimation(1.6, Container(
-                          margin: EdgeInsets.only(top: 50),
-                          child: Center(
-                            child: Text(
-                              "Login",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ))),
+                      child: FadeAnimation(
+                          1.6,
+                          Container(
+                              margin: EdgeInsets.only(top: 50),
+                              child: Center(
+                                child: Text(
+                                  "Login",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ))),
                     ),
                   ],
                 ),
@@ -185,91 +188,116 @@ if(isLoggedIn!=null) {
                 padding: EdgeInsets.all(30.0),
                 child: Column(
                   children: [
-                FadeAnimation(1.8, Container(
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Color.fromRGBO(143, 148, 251, .2),
-                                blurRadius: 20.0,
-                                offset: Offset(0, 10))
-                          ]),
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                                border: Border(
-                                    bottom:
-                                        BorderSide(color: Colors.grey[100]))),
-                            child: TextField(
-                              controller: _useremail,
-                              decoration: textfield("Email"),
-                            ),
+                    FadeAnimation(
+                        1.8,
+                        Container(
+                          padding: EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Color.fromRGBO(143, 148, 251, .2),
+                                    blurRadius: 20.0,
+                                    offset: Offset(0, 10))
+                              ]),
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: Colors.grey[100]))),
+                                child: TextField(
+                                  controller: _useremail,
+                                  decoration: textfield("Email"),
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(8.0),
+                                child: TextField(
+                                  obscureText: true,
+                                  controller: _password,
+                                  decoration: textfield("Password"),
+                                ),
+                              ),
+                            ],
                           ),
-                          Container(
-                            padding: EdgeInsets.all(8.0),
-                            child: TextField(
-                              obscureText: true,
-                              controller: _password,
-                              decoration: textfield("Password"),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
+                        )),
                     SizedBox(
                       height: 30,
                     ),
-                FadeAnimation(2.0, GestureDetector(onTap: (){signIn();
-                Navigator.push(context, MaterialPageRoute(builder:(context)=>AllQuotes()));},
-                  child: Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(colors: [
-                          Color.fromRGBO(143, 148, 251, 1),
-                          Color.fromRGBO(143, 148, 251, .6),
-                        ])),
-                        child: Center(
-                          child: Text(
-                            "Login",
-                            style: TextStyle(
-                                color: Colors.white, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                )),
-                    SizedBox(
-                      height: 10,
-                    ),
-                Row(mainAxisAlignment: MainAxisAlignment.end,children: [
-                  FadeAnimation(1.5, Text("Forgot Password?",style: TextStyle(fontSize: 12,color: Color.fromRGBO(143, 148, 251, 1) ),)),
-                ],),
-                SizedBox(
-                      height: scheight*1/50,
-                    ),
-                    FadeAnimation(2.0, GestureDetector(onTap: (){
-                      widget.toggle();
-                    },
-                      child: Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(colors: [
+                    FadeAnimation(
+                        2.0,
+                        GestureDetector(
+                          onTap: () {
+                            signIn();
+                            var x = DataBaseMethods.currentUser;
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AllQuotes()));
+                          },
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(colors: [
                               Color.fromRGBO(143, 148, 251, 1),
                               Color.fromRGBO(143, 148, 251, .6),
                             ])),
-                        child: Center(
-                          child: Text(
-                            "SignUp",
-                            style: TextStyle(
-                                color: Colors.white, fontWeight: FontWeight.bold),
+                            child: Center(
+                              child: Text(
+                                "Login",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    )),
-
+                        )),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        FadeAnimation(
+                            1.5,
+                            Text(
+                              "Forgot Password?",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color.fromRGBO(143, 148, 251, 1)),
+                            )),
+                      ],
+                    ),
+                    SizedBox(
+                      height: scheight * 1 / 50,
+                    ),
+                    FadeAnimation(
+                        2.0,
+                        GestureDetector(
+                          onTap: () {
+                            widget.toggle();
+                          },
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(colors: [
+                              Color.fromRGBO(143, 148, 251, 1),
+                              Color.fromRGBO(143, 148, 251, .6),
+                            ])),
+                            child: Center(
+                              child: Text(
+                                "SignUp",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        )),
                   ],
                 ),
               )

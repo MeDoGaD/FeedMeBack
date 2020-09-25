@@ -13,9 +13,9 @@ import 'package:flutter/material.dart';
 
 class Profile extends StatefulWidget {
   final User _currentUser = DataBaseMethods.currentUser;
+  User searchedUser;
   List<Quot> _quotes;
-
-  Profile(this._quotes);
+  Profile(this._quotes, {this.searchedUser});
 
   @override
   _ProfileState createState() => _ProfileState();
@@ -33,7 +33,7 @@ class _ProfileState extends State<Profile> {
 
   List<Quot> _staredQuotes;
   int _staredQuotesIndex;
-  bool _isOnTop = true;
+  bool _isOnTop = true, _myProfile = true;
 
   Query _Quotes;
 
@@ -42,6 +42,8 @@ class _ProfileState extends State<Profile> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    if (widget.searchedUser != null &&
+        widget.searchedUser.id != widget._currentUser.id) _myProfile = false;
     _searchController = new TextEditingController();
     _Quotes = FirebaseDatabase.instance
         .reference()
@@ -116,7 +118,9 @@ class _ProfileState extends State<Profile> {
                       child: StreamBuilder(
                           stream: _Quotes.onValue,
                           builder: (context, snapshot) {
-                            if (!snapshot.hasData || snapshot.data.snapshot.value == null) return Text("No Data");
+                            if (!snapshot.hasData ||
+                                snapshot.data.snapshot.value == null)
+                              return Text("No Data");
 
                             _stars = snapshot.data.snapshot.value;
                             length = _stars.length;
@@ -153,7 +157,7 @@ class _ProfileState extends State<Profile> {
                                         _following.keys.elementAt(index));
                                   } else {
                                     String staredQuote =
-                                    _stars.keys.elementAt(index);
+                                        _stars.keys.elementAt(index);
                                     if (length == 0)
                                       return Text("you have no stared Quotes!");
                                     return StaredMsgs(
@@ -164,12 +168,12 @@ class _ProfileState extends State<Profile> {
                                         _deslikes == null
                                             ? false
                                             : _deslikes.keys
-                                            .contains(staredQuote));
+                                                .contains(staredQuote));
                                   }
                                 },
                                 separatorBuilder: (context, index) => SizedBox(
-                                  height: scheight / 40,
-                                ),
+                                      height: scheight / 40,
+                                    ),
                                 itemCount: length == 0 ? 1 : length);
                           })),
                 ),
@@ -187,12 +191,12 @@ class _ProfileState extends State<Profile> {
       body: Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
-              Color.fromRGBO(143, 148, 251, 1),
-              Color.fromRGBO(143, 148, 251, .6),
-              Color.fromRGBO(143, 148, 251, 1),
-              //Color.fromRGBO(143, 148, 251, 1),
-              //Color.fromRGBO(143, 148, 251, .7),
-            ])),
+          Color.fromRGBO(143, 148, 251, 1),
+          Color.fromRGBO(143, 148, 251, .6),
+          Color.fromRGBO(143, 148, 251, 1),
+          //Color.fromRGBO(143, 148, 251, 1),
+          //Color.fromRGBO(143, 148, 251, .7),
+        ])),
         child: Padding(
           padding: EdgeInsets.only(top: scheight * 1 / 15),
           child: Column(children: [
@@ -210,28 +214,29 @@ class _ProfileState extends State<Profile> {
                         shape: BoxShape.circle),
                   ),
                   SizedBox(width: scwidth * 1 / 15),
-
-                    Container(
-                        width: scwidth * 1 / 4,
-                        child: TextField(
-                          controller: _searchController,
-                          decoration: InputDecoration(
-                            hintText: 'Search',
-                            hintStyle: TextStyle(color: Colors.white70),
-                          ),
-                          style: TextStyle(color: Colors.white),
-                        )),
-
+                  Container(
+                      width: scwidth * 1 / 4,
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          hintText: 'Search',
+                          hintStyle: TextStyle(color: Colors.white70),
+                        ),
+                        style: TextStyle(color: Colors.white),
+                      )),
                   IconButton(
                     icon: Icon(
                       Icons.search,
                       color: Colors.white70,
                     ),
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => new SearchResult(searchUsername: _searchController.text,)));
+                              builder: (context) => new SearchResult(
+                                    searchUsername: _searchController.text,
+                                    quotes: widget._quotes,
+                                  )));
                     },
                   ),
                   SizedBox(width: scwidth * 1 / 17),
@@ -259,51 +264,58 @@ class _ProfileState extends State<Profile> {
                 ],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    BottomSheetState = "Followers";
-                    _followers != null
-                        ? showBottomSheet(_followers.length)
-                        : showBottomSheet(0);
-                  },
-                  child: Text(
-                    "Followers",
-                    style: TextStyle(
-                        color: Colors.white70,
-                        decoration: TextDecoration.underline),
+            _myProfile
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          BottomSheetState = "Followers";
+                          _followers != null
+                              ? showBottomSheet(_followers.length)
+                              : showBottomSheet(0);
+                        },
+                        child: Text(
+                          "Followers",
+                          style: TextStyle(
+                              color: Colors.white70,
+                              decoration: TextDecoration.underline),
+                        ),
+                      ),
+                      GestureDetector(
+                          onTap: () {
+                            BottomSheetState = "Followings";
+                            _following != null
+                                ? showBottomSheet(_following.length)
+                                : showBottomSheet(0);
+                          },
+                          child: Text(
+                            "Followings",
+                            style: TextStyle(
+                                color: Colors.white70,
+                                decoration: TextDecoration.underline),
+                          )),
+                      GestureDetector(
+                          onTap: () {
+                            BottomSheetState = "Stared";
+                            _stars != null
+                                ? showBottomSheet(_stars.length)
+                                : showBottomSheet(0);
+                          },
+                          child: Text(
+                            "Stared Quotes",
+                            style: TextStyle(
+                                color: Colors.white70,
+                                decoration: TextDecoration.underline),
+                          )),
+                    ],
+                  )
+                : Center(
+                    child: Text(
+                      widget.searchedUser.username,
+                      style: TextStyle(color: Colors.black54, fontSize: scwidth*0.15),
+                    ),
                   ),
-                ),
-                GestureDetector(
-                    onTap: () {
-                      BottomSheetState = "Followings";
-                      _following != null
-                          ? showBottomSheet(_following.length)
-                          : showBottomSheet(0);
-                    },
-                    child: Text(
-                      "Followings",
-                      style: TextStyle(
-                          color: Colors.white70,
-                          decoration: TextDecoration.underline),
-                    )),
-                GestureDetector(
-                    onTap: () {
-                      BottomSheetState = "Stared";
-                      _stars != null
-                          ? showBottomSheet(_stars.length)
-                          : showBottomSheet(0);
-                    },
-                    child: Text(
-                      "Stared Quotes",
-                      style: TextStyle(
-                          color: Colors.white70,
-                          decoration: TextDecoration.underline),
-                    )),
-              ],
-            ),
             Padding(
               padding: EdgeInsets.only(
                   top: scheight / 30,
@@ -316,45 +328,53 @@ class _ProfileState extends State<Profile> {
                       MaterialPageRoute(
                           builder: (context) => new InsertQuote()));
                 },
-                child: Container(
-                  width: scwidth,
-                  height: scheight / 8,
-                  decoration: BoxDecoration(
-                      color: Colors.white70,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.only(
-                          bottomRight: Radius.circular(30),
-                          topLeft: Radius.circular(30))),
-                  child: Center(
-                    child: Text(
-                      'Type a Quote here ... ',
-                      style: TextStyle(fontSize: 22, color: Colors.grey[500]),
-                    ),
-                  ),
-                ),
+                child: _myProfile
+                    ? Container(
+                        width: scwidth,
+                        height: scheight / 8,
+                        decoration: BoxDecoration(
+                            color: Colors.white70,
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.only(
+                                bottomRight: Radius.circular(30),
+                                topLeft: Radius.circular(30))),
+                        child: Center(
+                          child: Text(
+                            'Type a Quote here ... ',
+                            style: TextStyle(
+                                fontSize: 22, color: Colors.grey[500]),
+                          ),
+                        ),
+                      )
+                    : Container(),
               ),
             ),
             Expanded(
               child: ListView.separated(
                 itemCount: _quotes.length,
                 itemBuilder: (context, index) {
-                  if (_quotes[(_quotes.length - 1) - index].authorName ==
-                      widget._currentUser.username) {
-                    return Quote(widget._currentUser,
-                        _quotes[(_quotes.length - 1) - index]);
+                  if (_myProfile) {
+                    if (_quotes[(_quotes.length - 1) - index].authorName ==
+                        widget._currentUser.username) {
+                      return Quote(widget._currentUser,
+                          _quotes[(_quotes.length - 1) - index]);
+                    }
                   } else {
-                    return Container();
+                    if (_quotes[(_quotes.length - 1) - index].authorName ==
+                        widget.searchedUser.username) {
+                      return Quote(widget.searchedUser,
+                          _quotes[(_quotes.length - 1) - index]);
+                    }
                   }
+                  return Container();
                 },
                 separatorBuilder: (context, index) => SizedBox(
                   height: _quotes[(_quotes.length - 1) - index].authorName ==
-                      widget._currentUser.username
+                          widget._currentUser.username
                       ? scheight * 1 / 70
                       : 0,
                 ),
               ),
-
-
             ),
           ]),
         ),

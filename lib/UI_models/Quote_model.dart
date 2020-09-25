@@ -10,6 +10,7 @@ import 'package:feedme/services/quicksort.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class Quote extends StatefulWidget {
   final User _currentUser;
@@ -22,6 +23,13 @@ class Quote extends StatefulWidget {
     // TODO: implement createState
     return _QuoteState();
   }
+}
+
+class Notification {
+  String title;
+  String body;
+  String message;
+  Notification(this.title, this.body, this.message);
 }
 
 class _QuoteState extends State<Quote> {
@@ -37,6 +45,60 @@ class _QuoteState extends State<Quote> {
   List<Comment> _comments = new List();
 //  List<CommentUi> _comments = new List();
   Stream _commentStream;
+
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  List<Notification> _notifications = List<Notification>();
+
+  Widget BuildNotification(Notification notification) {
+    return ListTile(
+      title: Text(notification.title),
+      subtitle: Text(notification.body),
+    );
+  }
+
+  _setNotification(Map<String, dynamic> message, int event) {
+    if (event == 0) {
+      final notification = message['notification'];
+      final data = message['data'];
+      String title = notification['title'];
+      String body = notification['body'];
+      String msg = data['message'];
+      Notification N = Notification(title, body, msg);
+      setState(() {
+        _notifications.add(N);
+      });
+    } else if (event == 2) {
+      final notification = message['notification'];
+      setState(() {
+        _notifications.add(Notification('onLaunch: ${notification['title']}',
+            'onLaunch: ${notification['body']}', 'message'));
+      });
+    }
+  }
+
+  _getToken() {
+    _firebaseMessaging.getToken().then((deviceToken) {
+      print("device token : $deviceToken");
+    });
+  }
+
+  _configureFirebaseListeners() {
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+        _setNotification(message, 0);
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+        _setNotification(message, 1);
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+        _setNotification(message, 2);
+      },
+    );
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -61,13 +123,9 @@ class _QuoteState extends State<Quote> {
         .child(widget._currentUser.id)
         .onChildAdded
         .listen(onUserAdded);
-
-    _dataBaseMethods.getComments(widget._currentQuote.quotID).then((value) {
-      setState(() {
-        _commentStream = value;
-      });
-    });
     super.initState();
+//    _getToken();
+//    _configureFirebaseListeners();
   }
 
   @override
@@ -178,17 +236,35 @@ class _QuoteState extends State<Quote> {
   Widget build(BuildContext context) {
     double scwidth = MediaQuery.of(context).size.width;
     double scheight = MediaQuery.of(context).size.height;
+//    return Scaffold(
+//      body: ListView(
+//        children: _notifications.map(BuildNotification).toList(),
+//      ),
+//    );
 
     return GestureDetector(
       onLongPress: () {
         //TODO remove quote
+        showDialog(
+          context: context,
+          builder: (_)=>AlertDialog(
+            content: FlatButton(
+              color: Colors.black26,
+              child: Text("Delete Quote"),
+              onPressed: (){
+                _dataBaseMethods.deleteQuote(widget._currentQuote);
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+        );
       },
       child: Padding(
         padding: EdgeInsets.all(scwidth * 1 / 40),
         child: Container(
           width: scwidth * 0.8,
           decoration: BoxDecoration(
-            color: Colors.white,
+              color: Colors.white,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
@@ -235,7 +311,7 @@ class _QuoteState extends State<Quote> {
                 padding: EdgeInsets.only(left: 4, right: 4),
                 child: Text(
                   widget._currentQuote.title,
-                  style: TextStyle( fontSize: 22),
+                  style: TextStyle(fontSize: 22),
                 ),
               ),
               Padding(
@@ -282,7 +358,7 @@ class _QuoteState extends State<Quote> {
                   ),
                   Text(
                     widget._currentQuote.numberOfDeslikes.toString(),
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.black54),
                   ),
                   IconButton(
                     onPressed: () {
@@ -316,7 +392,7 @@ class _QuoteState extends State<Quote> {
                   ),
                   Text(
                     widget._currentQuote.numberOfComments.toString(),
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.black54),
                   ),
                   IconButton(
                     onPressed: () {
@@ -427,11 +503,13 @@ class _QuoteState extends State<Quote> {
   void onQuoteAdded(Event event) {
     if (mounted)
       setState(() {
-        widget._currentQuote.numberOfComments =
-            event.snapshot.value['numberOfComments'];
-        widget._currentQuote.numberOfLikes = event.snapshot.value['likes'];
-        widget._currentQuote.numberOfDeslikes =
-            event.snapshot.value['deslikes'];
+       try{
+         widget._currentQuote.numberOfComments =
+         event.snapshot.value['numberOfComments'];
+         widget._currentQuote.numberOfLikes = event.snapshot.value['likes'];
+         widget._currentQuote.numberOfDeslikes =
+         event.snapshot.value['deslikes'];
+       }catch(e){};
       });
   }
 }
