@@ -49,14 +49,15 @@ class _AllQuotesState extends State<AllQuotes> {
   Widget build(BuildContext context) {
     double scwidth = MediaQuery.of(context).size.width;
     double scheight = MediaQuery.of(context).size.height;
+
     return (Scaffold(
       body: Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
-              Color.fromRGBO(143, 148, 251, 1),
-              Color.fromRGBO(143, 148, 251, .6),
-              Color.fromRGBO(143, 148, 251, 1),
-            ])),
+          Color.fromRGBO(143, 148, 251, 1),
+          Color.fromRGBO(143, 148, 251, .6),
+          Color.fromRGBO(143, 148, 251, 1),
+        ])),
         child: Padding(
             padding: EdgeInsets.only(top: scheight * 1 / 15),
             child: Column(
@@ -90,11 +91,14 @@ class _AllQuotesState extends State<AllQuotes> {
                           Icons.search,
                           color: Colors.white70,
                         ),
-                        onPressed: ()async {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => new SearchResult(searchUsername:  _searchController.text,)));
+                        onPressed: () async {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return new SearchResult(
+                              searchUsername: _searchController.text,
+                              quotes: _quotes,
+                            );
+                          })).then((value){_searchController.clear();});
                         },
                       ),
                       SizedBox(width: scwidth * 1 / 20),

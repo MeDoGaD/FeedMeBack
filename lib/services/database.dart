@@ -98,11 +98,11 @@ class DataBaseMethods {
     });
   }
 
- getUser(String username)async {
+  getUser(String username) async {
     User resultUser;
     return await _userReference.once();
   }
-  
+
   updateQuote(Quot quot) {
     _quotReference.child(quot.quotID).set({
       'title': quot.title,
@@ -164,12 +164,12 @@ class DataBaseMethods {
 
   void addComment(String commentText, Quot quot) {
     String key = (DateTime.now().year.toString() +
-            DateTime.now().month.toString() +
-            DateTime.now().day.toString() +
-            DateTime.now().minute.toString() +
-            DateTime.now().second.toString()+
-            DateTime.now().millisecond.toString());
-        _quotReference
+        DateTime.now().month.toString() +
+        DateTime.now().day.toString() +
+        DateTime.now().minute.toString() +
+        DateTime.now().second.toString() +
+        DateTime.now().millisecond.toString());
+    _quotReference
         .child(quot.quotID)
         .child('numberOfComments')
         .set(quot.numberOfComments);
@@ -181,13 +181,38 @@ class DataBaseMethods {
     });
   }
 
-  getComments(String quotID)async {
+  getComments(String quotID) async {
     return await _quotReference
         .child(quotID)
         .child('textsOfComments')
         .orderByChild('date')
         .limitToFirst(15)
         .onValue;
+  }
 
+  deleteQuote(Quot quot) {
+    _quotReference.child(quot.quotID).remove();
+    _userReference.once().then((DataSnapshot snapshot) {
+      Map tmp = snapshot.value;
+      tmp.forEach((key, value) {
+        print(key);
+        _userReference
+            .child(key)
+            .child('likedQuotes')
+            .child(quot.quotID)
+            .remove();
+        _userReference
+            .child(key)
+            .child('deslikedQuotes')
+            .child(quot.quotID)
+            .remove();
+        _userReference
+            .child(key)
+            .child('staredQuotes')
+            .child(quot.quotID)
+            .remove();
+      });
+    });
+//    print("Deleted Successfully!!!");
   }
 }

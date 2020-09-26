@@ -1,6 +1,8 @@
 import 'package:feedme/helper/helperfunctions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:feedme/model/quot_model.dart';
 import 'package:feedme/model/user_model.dart';
+import 'package:feedme/pages/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:feedme/services/database.dart';
@@ -8,8 +10,9 @@ import 'package:feedme/Widgets/widget.dart';
 
 class SearchResult extends StatefulWidget {
   String searchUsername;
-  User searchUser;
-  SearchResult({this.searchUsername});
+  User searchUser, _currentUser = DataBaseMethods.currentUser;
+  List<Quot> quotes;
+  SearchResult({this.searchUsername, this.quotes});
   @override
   _SearchResultState createState() => _SearchResultState();
 }
@@ -19,7 +22,7 @@ String _myName;
 class _SearchResultState extends State<SearchResult> {
   TextEditingController _searchResult = new TextEditingController();
   DataBaseMethods _dataBaseMethods;
-
+  bool Followed = false;
   initialSearch() {}
 
   Widget searchList() {
@@ -44,52 +47,78 @@ class _SearchResultState extends State<SearchResult> {
                 username,
                 style: mediumTextStyle(),
               ),
-              Text(
-                useremail,
-                style: mediumTextStyle(),
-              ),
             ],
           ),
-        Row(mainAxisAlignment: MainAxisAlignment.start,children: [
-
-        ],),
-             Spacer(flex: 10,),
-          Container(
-               decoration: BoxDecoration(borderRadius: BorderRadius.circular(30),
-                   gradient: LinearGradient(colors: [
-                     Color.fromRGBO(143, 148, 251, 1),
-                     Color.fromRGBO(143, 148, 251, .6),
-                   ])),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [],
+          ),
+          Spacer(
+            flex: 10,
+          ),
+          GestureDetector(
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  gradient: LinearGradient(colors: [
+                    Color.fromRGBO(143, 148, 251, 1),
+                    Color.fromRGBO(143, 148, 251, .6),
+                  ])),
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Text(
                 "Profile",
-                style: TextStyle(color: Colors.white,fontSize: 14),
+                style: TextStyle(color: Colors.white, fontSize: 12),
               ),
             ),
-          Spacer(),
-          Container(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(30),
-                gradient: LinearGradient(colors: [
-                  Color.fromRGBO(143, 148, 251, 1),
-                  Color.fromRGBO(143, 148, 251, .6),
-                ])),
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Text(
-              "Follow",
-              style:TextStyle(color: Colors.white,fontSize: 14),
-            ),
+            onTap: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => new Profile(widget.quotes,
+                        searchedUser: widget.searchUser))),
           ),
-
+          Spacer(),
+          followButton()
         ],
       ),
     );
+  }
+
+  followButton() {
+    if (widget.searchUser.id != widget._currentUser.id)
+      return GestureDetector(
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              gradient: !Followed
+                  ? LinearGradient(colors: [
+                      Color.fromRGBO(143, 148, 251, 1),
+                      Color.fromRGBO(143, 148, 251, .6),
+                    ])
+                  : LinearGradient(colors: [
+                      Colors.green
+                    ])),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Text(Followed ? "Followed" : "Follow",
+                  style: TextStyle(color: Colors.white,fontSize: 12),),
+        ),
+        onTap: () async {
+          setState(() {
+            Followed = !Followed;
+          });
+          _dataBaseMethods.followUser(
+              widget.searchUser.id, widget.searchUser.id, Followed);
+        },
+      );
+    else
+      return Container();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.black,
-        appBar: AppBar(backgroundColor:Color.fromRGBO(143, 148, 251, 1),
+        appBar: AppBar(
+          backgroundColor: Color.fromRGBO(143, 148, 251, 1),
           title: Text("Search"),
         ),
         body: FutureBuilder(
@@ -122,20 +151,20 @@ class _SearchResultState extends State<SearchResult> {
                   found = true;
                 }
               });
-              return Column(mainAxisAlignment: MainAxisAlignment.start, children: [ searchTile(
-                  widget.searchUser.username, widget.searchUser.email),],);
-
+              return found
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        searchTile(widget.searchUser.username,
+                            widget.searchUser.email),
+                      ],
+                    )
+                  : Center(
+                      child: Text(
+                      "Couldn't find user ${widget.searchUsername}",
+                      style: TextStyle(color: Colors.white),
+                    ));
             }
-          /* return Container(
-              child: Center(
-                  child: Text(
-                found
-                    ? "userID: ${widget.searchUser.id}\nusername: ${widget.searchUser.username}\nemail: ${widget.searchUser.email}"
-                    : "Couldn't find user ${widget.searchUsername}",
-                style: TextStyle(color: Colors.white),
-              )),
-            );*/
-
           },
         ));
   }
